@@ -5,7 +5,6 @@ import { Tabs, TabsList, TabsTrigger, TabsContent } from "@/components/ui/tabs";
 import { Button } from "@/components/ui/button";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Badge } from "@/components/ui/badge";
-import VideoPlayer from "./video-player";
 
 const videos = [
   {
@@ -18,7 +17,7 @@ const videos = [
       user_tag: "KR1",
       avatar: "https://via.placeholder.com/150",
     },
-    thumbnail: "https://via.placeholder.com/150",
+    thumbnail: "",
     likes: 100,
     comments: 50,
     tags: ["tag1", "tag2", "tag3"],
@@ -33,7 +32,7 @@ const videos = [
       user_tag: "KR1",
       avatar: "https://via.placeholder.com/150",
     },
-    thumbnail: "https://via.placeholder.com/150",
+    thumbnail: "",
     likes: 100,
     comments: 50,
     tags: ["tag1", "tag2", "tag3"],
@@ -48,7 +47,7 @@ const videos = [
       user_tag: "KR1",
       avatar: "https://via.placeholder.com/150",
     },
-    thumbnail: "https://via.placeholder.com/150",
+    thumbnail: "",
     likes: 100,
     comments: 50,
     tags: ["tag1", "tag2", "tag3"],
@@ -63,7 +62,7 @@ const videos = [
       user_tag: "KR1",
       avatar: "https://via.placeholder.com/150",
     },
-    thumbnail: "https://via.placeholder.com/150",
+    thumbnail: "",
     likes: 100,
     comments: 50,
     tags: ["tag1", "tag2", "tag3"],
@@ -115,7 +114,7 @@ export default function VideoFeed() {
                       <div className="flex items-center space-x-2">
                         <p className="font-medium">{video.author.user_name}</p>
                         <p className="text-sm text-gray-500">
-                          {video.author.user_tag}
+                          #{video.author.user_tag}
                         </p>
                       </div>
                       <p className="text-sm text-muted-foreground">
@@ -139,7 +138,11 @@ export default function VideoFeed() {
                   ))}
                 </div>
               </div>
-              <VideoPlayer thumbnail={video.thumbnail} />
+              {/* <VideoPlayer thumbnail={video.thumbnail} /> */}
+              <video width="100%" height="100%" controls>
+                <source src="https://www.w3schools.com/html/mov_bbb.mp4" type="video/mp4" />
+                <track kind="subtitles" src="subtitles.vtt" label="English" />
+              </video>
               <div className="flex items-center justify-between p-4">
                 <div className="flex items-center gap-6">
                   <Button

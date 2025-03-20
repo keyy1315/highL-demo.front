@@ -6,7 +6,7 @@ export default function Home() {
   return (
     <div className="min-h-screen bg-background">
       <header className="sticky top-0 z-40 w-full border-b bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60">
-        <div className="container flex h-16 items-center justify-between">
+        <div className="container mx-auto flex h-16 items-center justify-between">
           <div className="flex items-center gap-2">
             <svg
               xmlns="http://www.w3.org/2000/svg"
@@ -21,7 +21,7 @@ export default function Home() {
               <rect width="18" height="18" x="3" y="3" rx="2" />
               <path d="m9 8 6 4-6 4Z" />
             </svg>
-            <span className="text-xl font-bold">VideoHub</span>
+            <span className="text-xl font-bold">Highlighter</span>
           </div>
           <div className="flex items-center gap-4">
             <ModeToggle />
@@ -39,7 +39,7 @@ export default function Home() {
           </div>
         </div>
       </header>
-      <main className="container mx-auto grid w-full max-w-6xl grid-cols-1 gap-6 py-8 md:grid-cols-3">
+      <main className="container mx-auto grid w-full max-w-6xl grid-cols-1 gap-6 py-8 md:grid-cols-3 md:px-6 py-8">
         <div className="md:col-span-2">
           <VideoFeed />
         </div>
