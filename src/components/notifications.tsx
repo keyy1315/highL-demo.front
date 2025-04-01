@@ -1,8 +1,8 @@
-"use client"
+"use client";
 
-import { useState } from "react"
-import { Bell } from "lucide-react"
-import { Button } from "@/components/ui/button"
+import { useState, useEffect } from "react";
+import { Bell } from "lucide-react";
+import { Button } from "@/components/ui/button";
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -11,82 +11,81 @@ import {
   DropdownMenuLabel,
   DropdownMenuSeparator,
   DropdownMenuTrigger,
-} from "@/components/ui/dropdown-menu"
-import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar"
-import { Badge } from "@/components/ui/badge"
-import { useRouter } from "next/navigation"
+} from "@/components/ui/dropdown-menu";
+import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
+import { Badge } from "@/components/ui/badge";
+import { useRouter } from "next/navigation";
+import { Client } from "@stomp/stompjs";
 
-// Sample notification data
-const initialNotifications = [
-  {
-    id: 1,
-    user: {
-      name: "Min-ji Kim",
-      avatar: "/placeholder.svg?height=40&width=40",
-      username: "@minjikim",
-    },
-    action: "liked your video",
-    content: "Amazing sunset at the beach",
-    time: "2 minutes ago",
-    link: "/video/1", // Link to the video
-  },
-  {
-    id: 2,
-    user: {
-      name: "Jun-ho Park",
-      avatar: "/placeholder.svg?height=40&width=40",
-      username: "@chefpark",
-    },
-    action: "commented on your video",
-    content: "Quick cooking tutorial",
-    time: "15 minutes ago",
-    link: "/video/2", // Link to the video with comment
-  },
-  {
-    id: 3,
-    user: {
-      name: "Soo-jin Lee",
-      avatar: "/placeholder.svg?height=40&width=40",
-      username: "@soojinmusic",
-    },
-    action: "subscribed to your channel",
-    content: "",
-    time: "1 hour ago",
-    link: "/profile/soojinmusic", // Link to the user's profile
-  },
-  {
-    id: 4,
-    user: {
-      name: "VideoHub",
-      avatar: "/placeholder.svg?height=40&width=40",
-      username: "@videohub",
-    },
-    action: "Your video is trending",
-    content: "Seoul night drive - lofi music",
-    time: "3 hours ago",
-    link: "/analytics/trending", // Link to analytics page
-  },
-]
+interface Notification {
+  id: number;
+  user: {
+    name: string;
+    avatar: string;
+    username: string;
+  };
+  action: string;
+  content: string;
+  time: string;
+  url: string;
+}
 
 export function Notifications() {
-  const [notifications, setNotifications] = useState(initialNotifications)
-  const [isOpen, setIsOpen] = useState(false)
-  const router = useRouter()
+  const [isOpen, setIsOpen] = useState(false);
+  const [notifications, setNotifications] = useState<Notification[]>([]);
+  const [client, setClient] = useState<Client | null>(null);
+
+  const router = useRouter();
+
+  useEffect(() => {
+    const stompClient = new Client({
+      brokerURL: 'ws://172.25.96.1:8081/ws/websocket',
+      onConnect: () => {
+        console.log("connected to server");
+        stompClient.subscribe('/notifications/{}', (message) => {
+          const notification = JSON.parse(message.body);
+          setNotifications((prevNotifications) => [...prevNotifications, notification]);
+        });
+      },
+      onDisconnect: () => {
+        console.log("disconnected from server");
+      },
+      onStompError: (frame) => {
+        console.error("Error:", frame);
+      },
+    });
+
+    stompClient.activate();
+    setClient(stompClient);
+    return () => {
+      stompClient.deactivate();
+    };
+  }, []);
 
   const handleNotificationClick = (id: number, link: string) => {
-    // First remove the notification
-    setNotifications(notifications.filter((notification) => notification.id !== id))
-
-    // Then close the dropdown
-    setIsOpen(false)
-
-    // Finally navigate to the link
-    router.push(link)
-  }
+    setNotifications(
+      notifications.filter((notification) => notification.id !== id)
+    );
+    setIsOpen(false);
+    if(client) {
+      client.publish({
+        destination: '/app/notification.read',
+        body: JSON.stringify({ id }),
+      });
+    }
+    router.push(link);
+  };
 
   const markAllAsRead = () => {
-    setNotifications([])
-  }
+    const notificationIds = notifications.map(notification => notification.id);
+    setNotifications([]);
+    if(client) {
+      client.publish({
+        destination: '/app/notification.read',
+        body: JSON.stringify({ ids: notificationIds })
+      });
+    }
+  };
 
   return (
     <DropdownMenu open={isOpen} onOpenChange={setIsOpen}>
@@ -119,24 +118,42 @@ export function Notifications() {
               <DropdownMenuItem
                 key={notification.id}
                 className="flex cursor-pointer gap-4 p-3"
-                onClick={() => handleNotificationClick(notification.id, notification.link)}
+                onClick={() =>
+                  handleNotificationClick(notification.id, notification.url)
+                }
               >
                 <Avatar className="h-10 w-10">
-                  <AvatarImage src={notification.user.avatar} alt={notification.user.name} />
-                  <AvatarFallback>{notification.user.name.charAt(0)}</AvatarFallback>
+                  <AvatarImage
+                    src={notification.user.avatar}
+                    alt={notification.user.name}
+                  />
+                  <AvatarFallback>
+                    {notification.user.name.charAt(0)}
+                  </AvatarFallback>
                 </Avatar>
                 <div className="flex-1 space-y-1">
                   <p className="text-sm">
-                    <span className="font-medium">{notification.user.name}</span> {notification.action}
+                    <span className="font-medium">
+                      {notification.user.name}
+                    </span>{" "}
+                    {notification.action}
                   </p>
-                  {notification.content && <p className="text-xs text-muted-foreground">{notification.content}</p>}
-                  <p className="text-xs text-muted-foreground">{notification.time}</p>
+                  {notification.content && (
+                    <p className="text-xs text-muted-foreground">
+                      {notification.content}
+                    </p>
+                  )}
+                  <p className="text-xs text-muted-foreground">
+                    {notification.time}
+                  </p>
                 </div>
               </DropdownMenuItem>
             ))
           ) : (
             <div className="flex h-20 items-center justify-center p-4 text-center">
-              <p className="text-sm text-muted-foreground">No new notifications</p>
+              <p className="text-sm text-muted-foreground">
+                No new notifications
+              </p>
             </div>
           )}
         </DropdownMenuGroup>
@@ -144,7 +161,12 @@ export function Notifications() {
           <>
             <DropdownMenuSeparator />
             <div className="p-2">
-              <Button variant="outline" size="sm" className="w-full" onClick={markAllAsRead}>
+              <Button
+                variant="outline"
+                size="sm"
+                className="w-full"
+                onClick={markAllAsRead}
+              >
                 Mark all as read
               </Button>
             </div>
@@ -152,6 +174,5 @@ export function Notifications() {
         )}
       </DropdownMenuContent>
     </DropdownMenu>
-  )
+  );
 }
-

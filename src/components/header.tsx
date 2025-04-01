@@ -1,7 +1,7 @@
 import { ModeToggle } from "./mode-toggle";
-import { Avatar, AvatarFallback, AvatarImage } from "@radix-ui/react-avatar";
 import { Notifications } from "./notifications";
 import Link from "next/link";
+import UserToggle from "./user-toggle";
 
 export default function Header() {
   return (
@@ -21,19 +21,13 @@ export default function Header() {
             <rect width="18" height="18" x="3" y="3" rx="2" />
             <path d="m9 8 6 4-6 4Z" />
           </svg>
-          <span className="text-xl font-bold">VideoHub</span>
+          <span className="text-xl font-bold">HighLighter</span>
         </Link>
         <div className="flex items-center gap-4">
           <Notifications />
           <ModeToggle />
-          <div className="relative h-8 w-8 overflow-hidden rounded-full ml-2">
-            <Avatar>
-              <AvatarImage
-                src="https://ddragon.leagueoflegends.com/cdn/15.6.1/img/profileicon/685.png"
-                alt="User avatar"
-              />
-              <AvatarFallback>U</AvatarFallback>
-            </Avatar>
+          <div className="relative h-8 w-8 overflow-hidden rounded-full ml-1">
+            <UserToggle />  
           </div>
         </div>
       </div>

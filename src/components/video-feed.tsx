@@ -5,11 +5,12 @@ import { Tabs, TabsList, TabsTrigger, TabsContent } from "@/components/ui/tabs";
 import { Button } from "@/components/ui/button";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Badge } from "@/components/ui/badge";
+import { useRouter } from "next/navigation";
 
 const videos = [
   {
     id: 1,
-    title: "Video 1",
+    title: "Video 1", 
     description: "Description 1",
     author: {
       user_id: "kkk",
@@ -25,7 +26,7 @@ const videos = [
   {
     id: 2,
     title: "Video 2",
-    description: "Description 2",
+    description: "Description 2", 
     author: {
       user_id: "kkk",
       user_name: "John Doe",
@@ -42,7 +43,7 @@ const videos = [
     title: "Video 3",
     description: "Description 3",
     author: {
-      user_id: "kkk",
+      user_id: "kkk", 
       user_name: "John Doe",
       user_tag: "KR1",
       avatar: "https://via.placeholder.com/150",
@@ -58,7 +59,7 @@ const videos = [
     description: "Description 4",
     author: {
       user_id: "kkk",
-      user_name: "John Doe",
+      user_name: "John Doe", 
       user_tag: "KR1",
       avatar: "https://via.placeholder.com/150",
     },
@@ -70,15 +71,21 @@ const videos = [
 ];
 
 export default function VideoFeed() {
+  const router = useRouter();
   const [activeTab, setActiveTab] = useState("Recent");
   const [likedVideos, setLikedVideos] = useState<number[]>([]);
 
-  const toggleLike = (videoId: number) => {
+  const toggleLike = (e: React.MouseEvent, videoId: number) => {
+    e.stopPropagation();
     if (likedVideos.includes(videoId)) {
       setLikedVideos(likedVideos.filter((id) => id !== videoId));
     } else {
       setLikedVideos([...likedVideos, videoId]);
     }
+  };
+
+  const handleVideoClick = (videoId: number) => {
+    router.push(`/board/${videoId}`);
   };
 
   return (
@@ -97,7 +104,11 @@ export default function VideoFeed() {
         </TabsList>
         <TabsContent value="Recent" className="mt-6 space-y-8">
           {videos.map((video) => (
-            <div key={video.id} className="rounded-lg border bg-card shadow-sm">
+            <div 
+              key={video.id} 
+              className="rounded-lg border bg-card shadow-sm cursor-pointer hover:bg-accent/50 transition-colors"
+              onClick={() => handleVideoClick(video.id)}
+            >
               <div className="p-4">
                 <div className="flex items-start justify-between">
                   <div className="flex items-center gap-3">
@@ -122,7 +133,11 @@ export default function VideoFeed() {
                       </p>
                     </div>
                   </div>
-                  <Button variant="ghost" size="icon">
+                  <Button 
+                    variant="ghost" 
+                    size="icon"
+                    onClick={(e) => e.stopPropagation()}
+                  >
                     <MoreHorizontal className="h-5 w-5" />
                   </Button>
                 </div>
@@ -139,7 +154,7 @@ export default function VideoFeed() {
                 </div>
               </div>
               {/* <VideoPlayer thumbnail={video.thumbnail} /> */}
-              <video width="100%" height="100%" controls>
+              <video width="100%" height="100%" controls onClick={(e) => e.stopPropagation()}>
                 <source src="https://www.w3schools.com/html/mov_bbb.mp4" type="video/mp4" />
                 <track kind="subtitles" src="subtitles.vtt" label="English" />
               </video>
@@ -149,7 +164,7 @@ export default function VideoFeed() {
                     variant="ghost"
                     size="sm"
                     className="flex items-center gap-1"
-                    onClick={() => toggleLike(video.id)}
+                    onClick={(e) => toggleLike(e, video.id)}
                   >
                     <Heart
                       className={`h-5 w-5 ${
@@ -168,6 +183,7 @@ export default function VideoFeed() {
                     variant="ghost"
                     size="sm"
                     className="flex items-center gap-1"
+                    onClick={(e) => e.stopPropagation()}
                   >
                     <MessageCircle className="h-5 w-5" />
                     <span>{video.comments}</span>

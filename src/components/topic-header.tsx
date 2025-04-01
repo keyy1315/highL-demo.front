@@ -1,5 +1,3 @@
-import { Badge } from "@/components/ui/badge";
-
 interface TopicHeaderProps {
     topicName: string;
 
