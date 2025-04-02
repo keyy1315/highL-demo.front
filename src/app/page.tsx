@@ -9,7 +9,7 @@ export default function Home() {
       <Header />
       <main className="container mx-auto grid w-full max-w-7xl grid-cols-1 gap-6 py-8 md:grid-cols-4 md:px-3 py-8">
         <div className="md:col-span-3">
-          <VideoFeed />
+          <VideoFeed category={null} />
         </div>
         <div className="md:col-span-1">
           <Sidebar />

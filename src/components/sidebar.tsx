@@ -1,3 +1,4 @@
+import { topics } from "@/types/topics";
 import Link from "next/link";
 
 interface SidebarProps {
@@ -5,19 +6,6 @@ interface SidebarProps {
 }
 
 export default function Sidebar({ currentparam }: SidebarProps) {
-  const topics = [{
-    id: "1",
-    name: "Mastery",
-  },
-  {
-    id: "2",
-    name: "Issues",
-  },
-  {
-    id: "3",
-    name: "Am I Wrong?",
-  }];
-
   return (
     <aside className="hidden space-y-6 md:block">
       <div className="rounded-lg border bg-card p-4 shadow-sm">

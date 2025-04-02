@@ -16,19 +16,7 @@ import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Badge } from "@/components/ui/badge";
 import { useRouter } from "next/navigation";
 import { Client } from "@stomp/stompjs";
-
-interface Notification {
-  id: number;
-  user: {
-    name: string;
-    avatar: string;
-    username: string;
-  };
-  action: string;
-  content: string;
-  time: string;
-  url: string;
-}
+import { Notification } from "@/types/notification/notification";
 
 export function Notifications() {
   const [isOpen, setIsOpen] = useState(false);
@@ -39,10 +27,10 @@ export function Notifications() {
 
   useEffect(() => {
     const stompClient = new Client({
-      brokerURL: 'ws://172.25.96.1:8081/ws/websocket',
+      brokerURL: 'ws://localhost:8081/ws/websocket',
       onConnect: () => {
         console.log("connected to server");
-        stompClient.subscribe('/notifications/{}', (message) => {
+        stompClient.subscribe('/notifications/aaa', (message) => {
           const notification = JSON.parse(message.body);
           setNotifications((prevNotifications) => [...prevNotifications, notification]);
         });
@@ -62,7 +50,7 @@ export function Notifications() {
     };
   }, []);
 
-  const handleNotificationClick = (id: number, link: string) => {
+  const handleNotificationClick = (id: string, link: string) => {
     setNotifications(
       notifications.filter((notification) => notification.id !== id)
     );
@@ -124,27 +112,27 @@ export function Notifications() {
               >
                 <Avatar className="h-10 w-10">
                   <AvatarImage
-                    src={notification.user.avatar}
-                    alt={notification.user.name}
+                    src={notification.sender.iconUrl}
+                    alt={notification.sender.id}
                   />
                   <AvatarFallback>
-                    {notification.user.name.charAt(0)}
+                    {notification.sender.id.charAt(0)}
                   </AvatarFallback>
                 </Avatar>
                 <div className="flex-1 space-y-1">
                   <p className="text-sm">
                     <span className="font-medium">
-                      {notification.user.name}
+                      {notification.sender.id}
                     </span>{" "}
                     {notification.action}
                   </p>
-                  {notification.content && (
+                  {notification.action && (
                     <p className="text-xs text-muted-foreground">
-                      {notification.content}
+                      {notification.sender.id} is {notification.action}
                     </p>
                   )}
                   <p className="text-xs text-muted-foreground">
-                    {notification.time}
+                    {notification.createdDate}
                   </p>
                 </div>
               </DropdownMenuItem>
