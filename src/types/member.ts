@@ -7,3 +7,8 @@ export interface Member {
     isActive: boolean;
     role: string;
 }
+
+export interface LoginRequest {
+    userId: string;
+    password: string;
+}

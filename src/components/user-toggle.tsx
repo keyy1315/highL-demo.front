@@ -7,15 +7,24 @@ import {
 } from "./ui/dropdown-menu";
 import { Avatar, AvatarFallback, AvatarImage } from "./ui/avatar";
 import Link from "next/link";
+import { useAuthStore } from "@/stores/useAuthStore";
+import { Member } from "@/types/member";
+import { LogOut } from "lucide-react";
 
-export default function UserToggle() {
+interface UserToggleProps {
+  member: Member | null;
+}
+
+export default function UserToggle({ member }: UserToggleProps) {
+  const { logout } = useAuthStore();
+
   return (
     <DropdownMenu>
       <DropdownMenuTrigger asChild>
         <Button variant="ghost" className="h-8 w-8 p-0">
           <Avatar>
             <AvatarImage
-              src="https://ddragon.leagueoflegends.com/cdn/15.6.1/img/profileicon/685.png"
+              src={member?.iconUrl ?? ""}
               alt="User avatar"
             />
             <AvatarFallback>U</AvatarFallback>
@@ -25,13 +34,11 @@ export default function UserToggle() {
       </DropdownMenuTrigger>
       <DropdownMenuContent align="end">
         <DropdownMenuItem>
-          <Link href="/">Logout</Link>
+          <Link href={`/member/${member?.id}`}>My Page</Link>
         </DropdownMenuItem>
-        <DropdownMenuItem>
-          <Link href="/">My Profile</Link>
-        </DropdownMenuItem>
-        <DropdownMenuItem>
-          <Link href="/write">Write</Link>
+        <DropdownMenuItem onClick={logout} className="text-red-500">
+          <LogOut className="w-4 h-4 mr-2" />
+          <span>Logout</span>
         </DropdownMenuItem>
       </DropdownMenuContent>
     </DropdownMenu>

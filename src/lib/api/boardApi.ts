@@ -1,5 +1,5 @@
-import { Board } from "@/types/board/board";
-import { BoardRequest } from "@/types/board/boardRequest";
+import { Board } from "@/types/board";
+import { BoardRequest } from "@/types/board";
 import { api } from "./axios-instance";
 
 // GET METHODS
@@ -9,40 +9,49 @@ export async function getBoards(
   desc?: boolean
 ): Promise<Board[]> {
   if (!desc) desc = true;
-  const response = await api.get<Board[]>(`/api/board`, {
-    params: {
-      ...(category && { category }),
-      ...(sort && { sort }),
-      ...(desc && { desc }),
-    },
-  });
-  return response.data;
+  try {
+    const response = await api.get<Board[]>(`/api/board`, {
+      params: {
+        ...(category && { category }),
+        ...(sort && { sort }),
+        ...(desc && { desc }),
+      },
+      withCredentials: true,
+    });
+    return response.data;
+  } catch (error) {
+    throw error;
+  }
 }
 
 export async function getBoardByFollow(
   category?: string,
   sort?: string,
   desc?: boolean
-): Promise<Board> {
+): Promise<Board[]> {
   if (!desc) desc = true;
   try {
-    const response = await api.get<Board>(`/api/board/follow`, {
+    const response = await api.get<Board[]>(`/api/board/follow`, {
       params: {
         ...(category && { category }),
         ...(sort && { sort }),
         ...(desc && { desc }),
       },
+      withCredentials: true,
     });
     return response.data;
   } catch (error) {
-    console.error("Axios 에러!!!! :", error);
     throw error;
   }
 }
 
 export async function getBoard(id: string): Promise<Board> {
-  const response = await api.get<Board>(`/api/board/${id}`);
-  return response.data;
+  try {
+    const response = await api.get<Board>(`/api/board/${id}`);
+    return response.data;
+  } catch (error) {
+    throw error;
+  }
 }
 
 // PATCH METHODS
@@ -67,6 +76,7 @@ export async function updateBoard(
     headers: {
       "Content-Type": "multipart/form-data",
     },
+    withCredentials: true,
   });
   return response.status;
 }
@@ -87,12 +97,15 @@ export async function setBoard(
     headers: {
       "Content-Type": "multipart/form-data",
     },
+    withCredentials: true,
   });
   return response.status;
 }
 
 // DELETE METHODS
 export async function deleteBoard(id: string): Promise<number> {
-  const response = await api.delete<Board>(`/api/board/${id}`);
+  const response = await api.delete<Board>(`/api/board/${id}`, {
+    withCredentials: true,
+  });
   return response.status;
 }

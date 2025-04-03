@@ -4,15 +4,16 @@ import { create } from "zustand";
 
 interface ErrorState {
   message: string | null;
-  showError: (message: string) => void;
+  errorCode: string | null;
+  showError: (message: string, errorCode: string) => void;
   clearError: () => void;
 }
 
 export const useErrorStore = create<ErrorState>((set) => ({
   message: null,
-  showError: (message: string) => {
-    console.log("ERROR IN ZUSTAND!");
-    set({ message });
+  errorCode: null,
+  showError: (message: string, errorCode: string) => {
+    set({ message: message, errorCode: errorCode });
   },
-  clearError: () => set({ message: null }),
+  clearError: () => set({ message: null, errorCode: null }),
 }));

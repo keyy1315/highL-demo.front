@@ -16,8 +16,8 @@ import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Badge } from "@/components/ui/badge";
 import { useRouter } from "next/navigation";
 import { Client } from "@stomp/stompjs";
-import { Notification } from "@/types/notification/notification";
-
+import { Notification } from "@/types/notification";
+import { useAuthStore } from "@/stores/useAuthStore";
 export function Notifications() {
   const [isOpen, setIsOpen] = useState(false);
   const [notifications, setNotifications] = useState<Notification[]>([]);
@@ -25,12 +25,15 @@ export function Notifications() {
 
   const router = useRouter();
 
+  const { member } = useAuthStore();
+
   useEffect(() => {
+    if(member) {  
     const stompClient = new Client({
       brokerURL: 'ws://localhost:8081/ws/websocket',
       onConnect: () => {
         console.log("connected to server");
-        stompClient.subscribe('/notifications/aaa', (message) => {
+        stompClient.subscribe(`/notifications/${member.id}`, (message) => {
           const notification = JSON.parse(message.body);
           setNotifications((prevNotifications) => [...prevNotifications, notification]);
         });
@@ -46,9 +49,10 @@ export function Notifications() {
     stompClient.activate();
     setClient(stompClient);
     return () => {
-      stompClient.deactivate();
-    };
-  }, []);
+        stompClient.deactivate();
+      };
+    }
+  }, [member]);
 
   const handleNotificationClick = (id: string, link: string) => {
     setNotifications(

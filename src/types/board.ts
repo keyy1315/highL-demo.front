@@ -1,4 +1,4 @@
-import { Member } from "../member/member";
+import { Member } from "./member";
 import { Tag } from "./tag";
 
 export interface Board {
@@ -11,5 +11,14 @@ export interface Board {
     likes : number;
     views: number;
     comments: number;
-    createdAt: string;
+    createdDate: string;
 }
+
+export interface BoardRequest {
+    title: string;
+    content: string;
+    category: string;
+    tags: string[];
+  }
+  
+  
