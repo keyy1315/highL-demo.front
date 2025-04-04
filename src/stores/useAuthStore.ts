@@ -1,7 +1,7 @@
 import { checkLoginStatus, login, logout, signup } from "@/lib/api/loginApi";
 import axios from "axios";
 import { create } from "zustand";
-import { getMember } from "@/lib/api/memberApi";
+import { getMember, getMemberByCookie } from "@/lib/api/memberApi";
 import { Member } from "@/types/member";
 import { useErrorStore } from "./useErrorStore";
 
@@ -16,6 +16,7 @@ interface AuthState {
   resetState: () => void;
   checkLoginStatus: () => Promise<void>;
   isLoggedIn: boolean;
+  getMemberByCookie: () => Promise<void>;
 }
 
 export const useAuthStore = create<AuthState>((set) => ({
@@ -28,7 +29,7 @@ export const useAuthStore = create<AuthState>((set) => ({
     try {
       set({ loading: true, error: null });
       const response = await login({ userId, password });
-      set({ isLoggedIn: true, loading: false });
+      set({ isLoggedIn: response.data, loading: false });
     } catch (error) {
       if (axios.isAxiosError(error) && error.response) {
         set({ loading: false, isLoggedIn: false });
@@ -52,7 +53,7 @@ export const useAuthStore = create<AuthState>((set) => ({
     const showError = useErrorStore.getState().showError;
     try {
       set({ loading: true, error: null });
-      const response = await signup({ userId, password });
+      await signup({ userId, password });
     } catch (error) {
       if (axios.isAxiosError(error) && error.response) {
         set({ loading: false });
@@ -64,7 +65,7 @@ export const useAuthStore = create<AuthState>((set) => ({
     const showError = useErrorStore.getState().showError;
     try {
       const response = await getMember(userId);
-      set({ member: response });
+      console.log("response", response);
     } catch (error) {
       if (axios.isAxiosError(error) && error.response) {
         set({ loading: false });
@@ -80,6 +81,17 @@ export const useAuthStore = create<AuthState>((set) => ({
       set({ isLoggedIn: response, loading: false });
     } catch (error) {
       set({ isLoggedIn: false, loading: false });
+      if (axios.isAxiosError(error) && error.response) {
+        showError(error.response.data, error.response.data.status);
+      }
+    }
+  },
+  getMemberByCookie: async () => {
+    const showError = useErrorStore.getState().showError;
+    try {
+      const response = await getMemberByCookie();
+      set({ member: response });
+    } catch (error) {
       if (axios.isAxiosError(error) && error.response) {
         showError(error.response.data, error.response.data.status);
       }

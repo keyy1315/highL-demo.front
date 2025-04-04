@@ -6,7 +6,7 @@ export async function login(loginRequest: LoginRequest) {
     const response = await api.post("/login", loginRequest, {
       withCredentials: true,
     });
-    return response.data;
+    return response;
   } catch (error) {
     console.log("error",error);
     throw error;

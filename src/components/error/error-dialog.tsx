@@ -8,7 +8,7 @@ import {
   AlertDialogAction,
   AlertDialogFooter,
   AlertDialogHeader,
-} from "./ui/alert-dialog";
+} from "../ui/alert-dialog";
 
 import { useRouter } from "next/navigation";
 import { useErrorStore } from "@/stores/useErrorStore";
@@ -18,7 +18,9 @@ export default function ErrorDialog() {
   const { message, errorCode, clearError } = useErrorStore();
   const router = useRouter();
 
-  const [errorMessage, setErrorMessage] = useState(message);
+  const [errorMessage, setErrorMessage] = useState(
+    typeof message === 'object' ? "!Server Error" : message
+  );
   const [buttonText, setButtonText] = useState("확인");
 
   useEffect(() => {
@@ -32,13 +34,13 @@ export default function ErrorDialog() {
       errorCode === "INTERNAL_SERVER_ERROR" ||
       errorCode === "SERVICE_UNAVAILABLE"
     ) {
-      setErrorMessage(`오류가 발생했습니다.\n${message}`);
+      setErrorMessage(`오류가 발생했습니다.\n${typeof message === 'object' ? "!Server Error" : message}`);
       setButtonText("홈으로");
     } else if (errorCode === "SUCCESS") {
-      setErrorMessage(message);
+      setErrorMessage(typeof message === 'object' ? "!Server Error" : message);
       setButtonText("확인");
     } else {
-      setErrorMessage(message);
+      setErrorMessage(typeof message === 'object' ? "!Server Error" : message);
       setButtonText("확인");
     }
   }, [message, errorCode]);

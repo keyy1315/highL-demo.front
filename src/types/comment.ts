@@ -6,13 +6,13 @@ export interface Comment {
   likes: number;
   member: Member;
   createdDate: string;
-  parentCommentId: string;
+  parentCommentId: string | null;
   childComments: Comment[];
 }
 
 
 export interface CommentRequest {
     content: string;
-    parentId: string;
+    parentId: string | null;
     boardId: string;
 }

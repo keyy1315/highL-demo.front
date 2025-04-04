@@ -1,6 +1,6 @@
-import VideoFeed from "@/components/video-feed";
-import Header from "@/components/header";
-import Sidebar from "@/components/sidebar";
+import VideoFeed from "@/components/board/video-feed";
+import Header from "@/components/header/header";
+import Sidebar from "@/components/board/sidebar";
 
 
 export default function Home() {

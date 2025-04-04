@@ -10,5 +10,13 @@ export async function getMember(userId: string) {
   }
 }
 
-
-
+export async function getMemberByCookie() {
+  try {
+    const response = await api.get<Member>("/api/member/get", {
+      withCredentials: true,
+    });
+    return response.data;
+  } catch (error) {
+    throw error;
+  }
+}

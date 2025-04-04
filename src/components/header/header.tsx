@@ -1,18 +1,23 @@
 "use client";
 import { ModeToggle } from "./mode-toggle";
-import { Notifications } from "./notifications";
 import Link from "next/link";
 import UserToggle from "./user-toggle";
 import { useAuthStore } from "@/stores/useAuthStore";
-import { Button } from "./ui/button";
+import { Button } from "../ui/button";
 import { Plus } from "lucide-react";
 import { useEffect } from "react";
+import { NotificationBell } from "../notification/notification-bell";
+
 export default function Header() {
-  const { member, isLoggedIn, checkLoginStatus } = useAuthStore();
+  const { member, isLoggedIn, checkLoginStatus, getMemberByCookie } =
+    useAuthStore();
 
   useEffect(() => {
     checkLoginStatus();
-  }, [checkLoginStatus]);
+    if (isLoggedIn) {
+      getMemberByCookie();
+    }
+  }, [checkLoginStatus, getMemberByCookie, isLoggedIn]);
 
   return (
     <header className="sticky top-0 z-40 w-full border-b bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60">
@@ -43,7 +48,7 @@ export default function Header() {
                     <span className="hidden sm:inline">Write</span>
                   </Button>
                 </Link>
-                <Notifications />
+                <NotificationBell />
                 <ModeToggle />
               </div>
               <div className="relative h-8 w-8 overflow-hidden rounded-full ml-1">

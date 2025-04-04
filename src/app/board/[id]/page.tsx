@@ -1,28 +1,35 @@
 "use client";
 
-import Header from "@/components/header";
+import Header from "@/components/header/header";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Heart, MessageCircle } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
-import Sidebar from "@/components/sidebar";
+import Sidebar from "@/components/board/sidebar";
 import { Input } from "@/components/ui/input";
 import { useBoardStore } from "@/stores/useBoardStore";
 import { useEffect, useState } from "react";
 import { useParams } from "next/navigation";
 import { useCommentStore } from "@/stores/useCommentStore";
-import { CommentRequest } from "@/types/comment";
+import { CommentRequest, Comment } from "@/types/comment";
+import CommentList from "@/components/comment/comment-list";
+import CommentForm from "@/components/comment/comment-form";
+import { useNotificationContext } from "@/context/notification-context";
+
 export default function VideoPage() {
   const { getBoardById, board } = useBoardStore();
   const { createComment, comments, getComments } = useCommentStore();
   const params = useParams();
   const boardId = params.id as string;
+  const {sendNotification} = useNotificationContext();
 
   const [commentRequest, setCommentRequest] = useState<CommentRequest>({
     content: "",
-    parentId: "",
-    boardId: "",
+    parentId: null,
+    boardId: boardId,
   });
+
+  const [replyingTo, setReplyingTo] = useState<string | undefined>();
 
   useEffect(() => {
     if (boardId) {
@@ -35,8 +42,39 @@ export default function VideoPage() {
     }
   }, [boardId, getBoardById, getComments]);
 
-  const handleSubmit = () => {
-    createComment(boardId, commentRequest);
+  const handleSubmit = async () => {
+    await createComment(commentRequest);
+    await getComments(boardId);
+    // 댓글 입력 필드 초기화
+    setCommentRequest({
+      ...commentRequest,
+      content: "",
+    });
+    sendNotification({
+      action: "COMMENT",
+      referenceType: "board",
+      referenceId: boardId,
+      commentId: null
+    });
+  };
+
+  const handleCommentClick = (comment: Comment, parentComment?: Comment) => {
+    if (parentComment) {
+      // 대댓글을 클릭한 경우
+      setCommentRequest({
+        ...commentRequest,
+        content: `@${comment.member.id} `,
+        parentId: parentComment.id // 원래 부모 댓글의 ID를 사용
+      });
+    } else {
+      // 일반 댓글을 클릭한 경우
+      setCommentRequest({
+        ...commentRequest,
+        content: `@${comment.member.id} `,
+        parentId: comment.id
+      });
+    }
+    setReplyingTo(comment.member.id);
   };
 
   return (
@@ -131,48 +169,28 @@ export default function VideoPage() {
           </div>
 
           <div className="rounded-lg border bg-card p-4 shadow-sm">
-            <h2 className="mb-4 text-lg font-semibold">100 Comments</h2>
-            <div className="space-y-4">
-              {comments.map((comment) => (
-                <div className="flex gap-3">
-                  <Avatar className="h-8 w-8">
-                    <AvatarImage src={comment.member.iconUrl} alt="User" />
-                    <AvatarFallback>U</AvatarFallback>
-                  </Avatar>
-                  <div className="flex-1">
-                    <div className="flex items-center gap-2">
-                      {comment.member.gameName ? (
-                        <p className="text-sm font-medium text-gray-500">
-                          {comment.member.gameName} #{comment.member.tagLine}
-                        </p>
-                      ) : (
-                        <p className="text-sm font-medium text-gray-500">
-                          {comment.member.id}
-                        </p>
-                      )}
-                      <p className="text-xs text-muted-foreground">
-                        {comment.createdDate}
-                      </p>
-                    </div>
-                    <p className="text-sm">{comment.content}</p>
-                  </div>
-                </div>
-              ))}
-            </div>
-            <div className="mt-4 flex gap-2">
-              <Input
-                placeholder="Add a comment..."
-                className="flex-1"
-                value={commentRequest.content}
-                onChange={(e) =>
-                  setCommentRequest({
-                    ...commentRequest,
-                    content: e.target.value,
-                  })
-                }
-              />
-              <Button onClick={() => handleSubmit()}>Submit</Button>
-            </div>
+            <h2 className="mb-4 text-lg font-semibold">{board?.comments} Comments</h2>
+            <CommentList 
+              comments={comments}
+              onCommentClick={handleCommentClick}
+            />
+            <CommentForm
+              commentRequest={commentRequest}
+              onSubmit={handleSubmit}
+              onChange={(content) => 
+                setCommentRequest({
+                  ...commentRequest,
+                  content,
+                })
+              }
+              onCancel={() => {
+                setCommentRequest({
+                  ...commentRequest,
+                  content: "",
+                  parentId: null
+                });
+              }}
+            />
           </div>
         </div>
         <div className="md:col-span-1">

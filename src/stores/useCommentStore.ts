@@ -14,11 +14,8 @@ interface CommentState {
   comment: Comment | null;
   loading: boolean;
   error: string | null;
-  getComments: (boardId: string) => Promise<void>;
-  createComment: (
-    boardId: string,
-    commentRequest: CommentRequest
-  ) => Promise<void>;
+  getComments: (boardId: string, sort?: string, asc?: boolean) => Promise<void>;
+  createComment: (commentRequest: CommentRequest) => Promise<void>;
   deleteComment: (commentId: string) => Promise<void>;
   updateComment: (
     commentId: string,
@@ -31,11 +28,11 @@ export const useCommentStore = create<CommentState>((set) => ({
   comment: null,
   loading: false,
   error: null,
-  getComments: async (boardId: string) => {
+  getComments: async (boardId: string, sort?: string, asc?: boolean) => {
     const showError = useErrorStore.getState().showError;
     try {
       set({ loading: true, error: null });
-      const response = await getComments(boardId);
+      const response = await getComments(boardId, sort, asc);
       set({ comments: response, loading: false });
     } catch (error) {
       if (axios.isAxiosError(error) && error.response) {
@@ -43,12 +40,13 @@ export const useCommentStore = create<CommentState>((set) => ({
       }
     }
   },
-  createComment: async (boardId: string, commentRequest: CommentRequest) => {
+  createComment: async (commentRequest: CommentRequest) => {
     const showError = useErrorStore.getState().showError;
     try {
       set({ loading: true, error: null });
-      const response = await createComment(boardId, commentRequest);
+      const response = await createComment(commentRequest);
       set({ comment: response, loading: false });
+      await useCommentStore.getState().getComments(commentRequest.boardId);
     } catch (error) {
       if (axios.isAxiosError(error) && error.response) {
         showError(error.response.data.message, error.response.data.errorCode);

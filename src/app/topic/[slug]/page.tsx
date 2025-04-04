@@ -2,10 +2,10 @@
 
 import { use } from "react";
 
-import TopicHeader from "@/components/topic-header";
-import VideoFeed from "@/components/video-feed";
-import Header from "@/components/header";
-import Sidebar from "@/components/sidebar";
+import TopicHeader from "@/components/board/topic-header";
+import VideoFeed from "@/components/board/video-feed";
+import Header from "@/components/header/header";
+import Sidebar from "@/components/board/sidebar";
 
 export default function TopicPage({ params }: { params: Promise<{ slug: string }> }) {
 

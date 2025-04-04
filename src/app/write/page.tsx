@@ -1,6 +1,6 @@
 "use client";
 
-import Header from "@/components/header";
+import Header from "@/components/header/header";
 import { topics } from "@/types/topics";
 import { Button } from "@/components/ui/button";
 import {
