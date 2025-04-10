@@ -18,7 +18,7 @@ import { useRouter } from "next/navigation";
 import { useErrorStore } from "@/stores/useErrorStore";
 
 export default function LoginPage() {
-  const { login, signup, loading, error, resetState, isLoggedIn } = useAuthStore();
+  const { login, signup, loading, error, resetState } = useAuthStore();
   const [isSignUp, setIsSignUp] = useState(false);
   const [userId, setUserId] = useState("");
   const [password, setPassword] = useState("");

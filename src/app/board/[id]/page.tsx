@@ -6,7 +6,6 @@ import { Heart, MessageCircle } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import Sidebar from "@/components/board/sidebar";
-import { Input } from "@/components/ui/input";
 import { useBoardStore } from "@/stores/useBoardStore";
 import { useEffect, useState } from "react";
 import { useParams } from "next/navigation";
@@ -28,8 +27,6 @@ export default function VideoPage() {
     parentId: null,
     boardId: boardId,
   });
-
-  const [replyingTo, setReplyingTo] = useState<string | undefined>();
 
   useEffect(() => {
     if (boardId) {
@@ -74,7 +71,6 @@ export default function VideoPage() {
         parentId: comment.id
       });
     }
-    setReplyingTo(comment.member.id);
   };
 
   return (
