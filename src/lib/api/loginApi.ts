@@ -1,9 +1,11 @@
-import { api } from "./axios-instance";
+"use client";
+
+import axios from "axios";
 import { LoginRequest } from "@/types/member";
 
 export async function login(loginRequest: LoginRequest) {
   try {
-    const response = await api.post("/login", loginRequest, {
+    const response = await axios.post("/api/login", loginRequest, {
       withCredentials: true,
     });
     return response;
@@ -13,14 +15,9 @@ export async function login(loginRequest: LoginRequest) {
   }
 }
 
-export async function signup(loginRequest: LoginRequest) {
-  const response = await api.post("/api/member/signup", loginRequest);
-  return response.data;
-}
-
 export async function checkLoginStatus() {
   try {
-    const response = await api.get("/auth", {
+    const response = await axios.get("/auth", {
       withCredentials: true,
     });
     return response.data;
@@ -31,7 +28,7 @@ export async function checkLoginStatus() {
 
 export async function logout() {
   try {
-    const response = await api.get("/logout", {
+    const response = await axios.get("/logout", {
       withCredentials: true,
     });
     return response.data;

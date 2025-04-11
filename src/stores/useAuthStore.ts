@@ -1,7 +1,7 @@
-import { checkLoginStatus, login, logout, signup } from "@/lib/api/loginApi";
+import { checkLoginStatus, login, logout } from "@/lib/api/loginApi";
 import axios from "axios";
 import { create } from "zustand";
-import { getMember, getMemberByCookie } from "@/lib/api/memberApi";
+import { getMember, getMemberByCookie, signup } from "@/lib/api/memberApi";
 import { Member } from "@/types/member";
 import { useErrorStore } from "./useErrorStore";
 
