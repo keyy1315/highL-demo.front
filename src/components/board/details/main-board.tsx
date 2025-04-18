@@ -1,20 +1,23 @@
 "use client";
 
-import { Badge } from "../ui/badge";
+import { Badge } from "../../ui/badge";
 import { useQuery } from "@tanstack/react-query";
 import { getBoard } from "@/lib/api/boardApi";
 import { useParams } from "next/navigation";
-import { Button } from "../ui/button";
-import { Heart, MessageCircle } from "lucide-react";
-import { Avatar, AvatarFallback, AvatarImage } from "../ui/avatar";
-import BoardComment from "../comment/board-comment";
+import { Button } from "../../ui/button";
+import { Heart, MessageCircle, Pencil, Trash2 } from "lucide-react";
+import { Avatar, AvatarFallback, AvatarImage } from "../../ui/avatar";
+import BoardComment from "../../comment/board-comment";
+import { useAuthStore } from "@/stores/useAuthStore";
 
 export default function MainBoard() {
-  const s3BaseUrl = process.env.NEXT_PUBLIC_S3_BASE_URL;
-
+  // const s3BaseUrl = process.env.NEXT_PUBLIC_S3_BASE_URL;
+  
   const params = useParams();
   const boardId = params.id as string;
-  
+ 
+  const { member } = useAuthStore();
+
   const { data: board, isLoading } = useQuery({
     queryKey: ["board", boardId],
     queryFn: () => getBoard(boardId as string),
@@ -26,11 +29,28 @@ export default function MainBoard() {
     <>
       <div className="rounded-lg border bg-card shadow-sm mb-8">
         <video width="100%" height="100%" controls>
-          <source src={`${s3BaseUrl}/${board?.videoUrl}`} type="video/mp4" />
+          <source 
+          // src={`${s3BaseUrl}/${board?.videoUrl}`} 
+          src={`${process.env.NEXT_PUBLIC_TEMP_VIDEO_URL}`}
+          type="video/mp4" />
           <track kind="subtitles" src="subtitles.vtt" label="English" />
         </video>
         <div className="p-4">
-          <h1 className="text-2xl font-bold">{board?.title}</h1>
+          <div className="flex items-center justify-between">
+            <h1 className="text-2xl font-bold">{board?.title}</h1>
+            {
+              board?.member.id === member?.id && (
+                <div className="flex items-center gap-2">
+                  <Button variant="ghost" size="sm">
+                    <Pencil className="h-5 w-5" />
+              </Button>
+              <Button variant="destructive" size="sm">
+                <Trash2 className="h-5 w-5 text-white" />
+                  </Button>
+                </div>
+              )
+            }
+          </div>
           <div className="mt-2 flex items-center justify-between">
             <div className="flex items-center gap-2">
               <span className="text-sm text-muted-foreground">

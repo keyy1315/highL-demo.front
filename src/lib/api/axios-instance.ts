@@ -20,8 +20,10 @@ api.interceptors.request.use(
         if(error.response) {
             showError(error.response.data.message, error.response.data.errorCode);
         } else if(error.request) {
+            console.log("error.request in interceptor.request: ", error.request);
             showError("서버에 연결할 수 없습니다.", "INTERNAL_SERVER_ERROR");
         } else {
+            console.log("error.response in interceptor.request: ", error);
             showError("오류가 발생했습니다.", "INTERNAL_SERVER_ERROR");
         }
         return Promise.reject(error);
@@ -38,8 +40,10 @@ api.interceptors.response.use(
         if(error.response) {
             showError(error.response.data.message, error.response.data.errorCode);
         } else if(error.request) {
+            console.log("error.request in interceptor.response: ", error.request);
             showError("서버에 연결할 수 없습니다.", "INTERNAL_SERVER_ERROR");
         } else {
+            console.log("error.response in interceptor.response: ", error); 
             showError("오류가 발생했습니다.", "INTERNAL_SERVER_ERROR");
         }
         return Promise.reject(error);

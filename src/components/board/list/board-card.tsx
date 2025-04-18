@@ -71,7 +71,8 @@ export function BoardCard({ board, isLiked, onLike }: BoardCardProps) {
         onClick={(e) => e.stopPropagation()}
       >
         <source
-          src={`https://highl-file.s3.ap-northeast-2.amazonaws.com/${board.videoUrl}`}
+          // src={`https://highl-file.s3.ap-northeast-2.amazonaws.com/${board.videoUrl}`}
+          src={`${process.env.NEXT_PUBLIC_TEMP_VIDEO_URL}`}
           type="video/mp4"
         />
       </video>

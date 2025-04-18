@@ -1,5 +1,5 @@
-import MainBoard from "@/components/board/main-board";
-import Sidebar from "@/components/board/sidebar";
+import MainBoard from "@/components/board/details/main-board";
+import Sidebar from "@/components/board/list/sidebar";
 import Header from "@/components/header/header";
 
 export default function BoardPage() {

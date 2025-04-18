@@ -1,48 +1,96 @@
 "use client";
 
-import { CommentRequest } from "@/types/comment";
+import { useState, useEffect } from "react";
+import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
+import { CommentRequest } from "@/types/comment";
+import { createComment } from "@/lib/api/commentApi";
 
 interface CommentFormProps {
-  commentRequest: CommentRequest;
-  onSubmit: () => void;
-  onChange: (content: string) => void;
-  onCancel: () => void;
-  replyingTo?: string; // 답글 대상의 사용자 ID
+  boardId: string;
+  parentId?: string | null;
+  replyingTo?: string; // User ID being replied to
+  onSuccess?: () => void; // Callback on successful submission
+  onCancel?: () => void;  // Callback to cancel reply mode
+  initialContent?: string; // Optional initial content for replies
 }
 
-export default function CommentForm({ 
-  commentRequest, 
-  onSubmit, 
-  onChange, 
+export default function CommentForm({
+  boardId,
+  parentId = null,
   onCancel,
-  replyingTo 
+  initialContent = ""
 }: CommentFormProps) {
+  const [content, setContent] = useState(initialContent);
+
+  useEffect(() => {
+    setContent(initialContent);
+  }, [initialContent]);
+
+  const queryClient = useQueryClient();
+  const mutation = useMutation({
+    mutationFn: createComment,
+    onSuccess: () => {
+      setContent(""); // Clear input after successful submission
+      queryClient.invalidateQueries({ queryKey: ["comments", boardId] });
+    },
+    onError: (error) => {
+       console.error("Failed to create comment:", error);
+       // Optionally: Add user feedback like a toast notification
+    }
+  });
+
+  const handleSubmit = () => {
+    if (!content.trim()) return; // Prevent submitting empty comments
+
+    const commentRequest: CommentRequest = {
+      content: content.trim(),
+      parentId,
+      boardId,
+    };
+    mutation.mutate(commentRequest);
+  };
+
+  const handleKeyDown = (e: React.KeyboardEvent<HTMLInputElement>) => {
+    // Submit on Enter unless Shift is pressed
+    if (e.key === 'Enter' && !e.shiftKey) {
+      e.preventDefault(); // Prevent default Enter behavior (like line break in textarea)
+      handleSubmit();
+    }
+  }
+
+  const handleCancel = () => {
+    setContent(""); // Clear content
+    if (onCancel) {
+      onCancel(); // Call the cancel callback
+    }
+  }
+
   return (
     <div className="mt-4 flex flex-col gap-2">
-      {replyingTo && (
-        <p className="text-sm text-muted-foreground">
-          답글 대상: <span className="font-medium text-blue-500">@{replyingTo}</span>
-        </p>
-      )}
       <div className="flex gap-2">
         <Input
-          placeholder={commentRequest.parentId ? "Write a reply..." : "Add a comment..."}
+          placeholder={parentId ? "Write your reply..." : "Add a comment..."}
           className="flex-1"
-          value={commentRequest.content}
-          onChange={(e) => onChange(e.target.value)}
+          value={content}
+          onChange={(e) => setContent(e.target.value)}
+          onKeyDown={handleKeyDown}
         />
-        <Button 
-          onClick={onSubmit}
+        <Button
+          onClick={handleSubmit}
           variant="default"
+          disabled={mutation.isPending || !content.trim()}
+          aria-label={parentId ? "Submit Reply" : "Submit Comment"}
         >
-          {commentRequest.parentId ? "Reply" : "Comment"}
+          {mutation.isPending ? "Submitting..." : (parentId ? "Reply" : "Comment")}
         </Button>
-        {commentRequest.parentId && (
-          <Button 
-            onClick={onCancel}
+        {parentId && onCancel && (
+          <Button
+            onClick={handleCancel}
             variant="ghost"
+            aria-label="Cancel Reply"
+            tabIndex={0}
           >
             Cancel
           </Button>

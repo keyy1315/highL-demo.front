@@ -21,7 +21,7 @@ export default function UserToggle({ member }: UserToggleProps) {
   return (
     <DropdownMenu>
       <DropdownMenuTrigger asChild>
-        <Button variant="ghost" className="h-8 w-8 p-0">
+        <Button variant="ghost" className="h-8 w-8 p-0 cursor-pointer">
           <Avatar>
             <AvatarImage
               src={member?.iconUrl ?? ""}

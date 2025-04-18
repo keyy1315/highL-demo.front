@@ -1,23 +1,24 @@
 import type { NextConfig } from "next";
+const NEXT_PUBLIC_API_URL = process.env.NEXT_PUBLIC_API_URL || "http://localhost:8081";
 
 const nextConfig: NextConfig = {
   async rewrites() {
     return [
       {
         source: "/api/:path*",
-        destination: "http://localhost:8081/api/:path*",
+        destination: `${NEXT_PUBLIC_API_URL}/api/:path*`,
       },
       {
         source: "/api/login",
-        destination: "http://localhost:8081/login",
+        destination: `${NEXT_PUBLIC_API_URL}/login`,
       },
       {
         source: "/logout",
-        destination: "http://localhost:8081/logout",
+        destination: `${NEXT_PUBLIC_API_URL}/logout`,
       },
       {
         source: "/auth",
-        destination: "http://localhost:8081/auth",
+        destination: `${NEXT_PUBLIC_API_URL}/auth`,
       }
     ];
   },

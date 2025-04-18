@@ -43,7 +43,7 @@ export default function Header() {
             <>
               <div className="flex items-center gap-2">
                 <Link href="/write">
-                  <Button size={"sm"} className="gap-1">
+                  <Button size={"sm"} className="gap-1 cursor-pointer">
                     <Plus className="w-4 h-4" />
                     <span className="hidden sm:inline">Write</span>
                   </Button>
@@ -57,7 +57,7 @@ export default function Header() {
             </>
           ) : (
             <Link href="/login">
-              <Button>Login</Button>
+              <Button className="cursor-pointer">Login</Button>
             </Link>
           )}
         </div>

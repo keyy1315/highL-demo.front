@@ -94,14 +94,13 @@ export async function setBoard(
     "dto",
     new Blob([JSON.stringify(boardRequest)], { type: "application/json" })
   );
-
-  const response = await api.post(`/board`, formData, {
+  const response = await api.post('http://localhost:8081/api/board', formData, {
     headers: {
       "Content-Type": "multipart/form-data",
     },
     withCredentials: true,
   });
-  return response.status;
+    return response.status;
 }
 
 // DELETE METHODS

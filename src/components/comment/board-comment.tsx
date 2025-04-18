@@ -1,16 +1,24 @@
+import { useState } from "react";
 import CommentForm from "./comment-form";
 import CommentList from "./comment-list";
 import { useQuery } from "@tanstack/react-query";
-import { createComment, getComments } from "@/lib/api/commentApi";
+import { getComments } from "@/lib/api/commentApi";
 import { Comment } from "@/types/comment";
-import { useCommentFormStore } from "@/stores/useCommentFormStore";
 import { useNotificationContext } from "@/context/notification-context";
 
 interface BoardCommentProps {
   boardId: string;
 }
 
+interface ReplyTarget {
+  parentId: string;
+  replyingTo: string;
+}
+
 export default function BoardComment({ boardId }: BoardCommentProps) {
+  const { sendNotification } = useNotificationContext();
+  const [replyTarget, setReplyTarget] = useState<ReplyTarget | null>(null);
+
   const {
     data: comments,
     isLoading,
@@ -19,27 +27,23 @@ export default function BoardComment({ boardId }: BoardCommentProps) {
     queryKey: ["comments", boardId],
     queryFn: () => getComments(boardId),
   });
-  const { form, setField, resetForm } = useCommentFormStore();
-  const { sendNotification } = useNotificationContext();
 
-  const handleCommentClick = (comment: Comment, parentComment?: Comment) => {
-    if (parentComment) {
-      setField("parentId", parentComment.id);
-      setField("content", `@${parentComment.member.id} `);
-    } else {
-      setField("parentId", comment.id);
-      setField("content", `@${comment.member.id} `);
-    }
+  const handleCommentClick = (comment: Comment) => {
+    const targetParentId = comment.parentCommentId ? comment.parentCommentId : comment.id;
+    const targetReplyingTo = comment.member.id;
+    setReplyTarget({
+      parentId: targetParentId,
+      replyingTo: targetReplyingTo,
+    });
   };
 
-  const handleSubmit = async () => {
-    const updateForm = { ...form, boardId: boardId };
-    await createComment(updateForm);
+  const handleCancelReply = () => {
+    setReplyTarget(null);
+  };
 
-    resetForm();
-
-    await refetch();
-
+  const handleSuccess = () => {
+    setReplyTarget(null);
+    refetch();
     sendNotification({
       action: "COMMENT",
       referenceType: "board",
@@ -53,16 +57,19 @@ export default function BoardComment({ boardId }: BoardCommentProps) {
   return (
     <div className="rounded-lg border bg-card p-4 shadow-sm">
       <h2 className="mb-4 text-lg font-semibold">
-        {comments?.length} Comments
+        {comments?.length ?? 0} Comments
       </h2>
-      <CommentList comments={comments} onCommentClick={handleCommentClick} />
+      <CommentList
+        comments={comments ?? []}
+        onCommentClick={handleCommentClick}
+      />
       <CommentForm
-        commentRequest={form}
-        onSubmit={handleSubmit}
-        onChange={(content) => setField("content", content)}
-        onCancel={() => {
-          resetForm();
-        }}
+        boardId={boardId}
+        parentId={replyTarget?.parentId ?? null}
+        replyingTo={replyTarget?.replyingTo}
+        initialContent={replyTarget ? `@${replyTarget.replyingTo} ` : ""}
+        onSuccess={handleSuccess}
+        onCancel={handleCancelReply}
       />
     </div>
   );
