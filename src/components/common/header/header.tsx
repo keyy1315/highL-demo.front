@@ -1,4 +1,5 @@
 "use client";
+
 import { ModeToggle } from "./mode-toggle";
 import Link from "next/link";
 import UserToggle from "./user-toggle";
@@ -7,21 +8,10 @@ import { Button } from "../../ui/button";
 import { Plus, Menu } from "lucide-react";
 import { NotificationBell } from "../../notification/notification-bell";
 import { useSidebarStore } from "@/stores/useSidebarStore";
-import { useEffect } from "react";
-import { useAuth } from "@/hooks/useAuth";
 
 export default function Header() {
   const toggleSidebar = useSidebarStore((state) => state.toggle);
-  const { auth, isLoading } = useAuth();
-  const { member, isLoggedIn, setMember, setIsLoggedIn } = useAuthStore();
-
-  useEffect(() => {
-    if (isLoading || isLoggedIn) return;
-    if (auth) {
-      setMember(auth.member);
-      setIsLoggedIn(true);
-    }
-  }, [auth, isLoading, isLoggedIn]);
+  const { member, isLoggedIn } = useAuthStore();
 
   return (
     <header className="sticky top-0 z-40 w-full border-b bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60">

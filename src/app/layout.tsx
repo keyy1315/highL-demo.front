@@ -5,7 +5,7 @@ import "./globals.css";
 import ProvidersWrapper from "@/components/providers";
 import Header from "@/components/common/header/header";
 import Footer from "@/components/common/footer";
-import { getAuth } from "@/lib/api/loginApi";
+import { getMemberByToken } from "@/lib/api/memberApi";
 
 const inter = Inter({ subsets: ["latin"] });
 
@@ -19,12 +19,12 @@ export default async function RootLayout({
 }: {
   children: React.ReactNode;
 }) {
-  const member = await getAuth();
-
+  const member = await getMemberByToken();
+  
   return (
     <html lang="en" suppressHydrationWarning>
       <body className={inter.className}>
-        <ProvidersWrapper member={member}>
+        <ProvidersWrapper>
           <Header />
           {children}
           <Footer />

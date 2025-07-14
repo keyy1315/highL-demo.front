@@ -3,25 +3,16 @@
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { NotificationProvider } from "@/context/notificationContext";
 import { ThemeProvider } from "next-themes";
-import { Member } from "@/types/member";
-import { useAuthStore } from "@/stores/useAuthStore";
 
 const queryClient = new QueryClient();
 
 interface ProvidersWrapperProps {
   children: React.ReactNode;
-  member: Member | null;
 }
 
 export default function ProvidersWrapper({
-  children,
-  member,
+  children
 }: ProvidersWrapperProps) {
-  const { setMember, setIsLoggedIn } = useAuthStore();
-  if (member) {
-    setMember(member);
-    setIsLoggedIn(true);
-  }
   return (
     <QueryClientProvider client={queryClient}>
       <ThemeProvider
