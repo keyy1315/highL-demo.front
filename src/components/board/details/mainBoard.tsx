@@ -1,55 +1,66 @@
 "use client";
 
-import { Badge } from "../../ui/badge";
-import { useQuery } from "@tanstack/react-query";
-import { getBoard } from "@/lib/api/boardApi";
+import { Badge } from "@/components/ui/badge";
 import { useParams } from "next/navigation";
-import { Button } from "../../ui/button";
+import { Button } from "@/components/ui/button";
 import { Heart, MessageCircle, Pencil, Trash2 } from "lucide-react";
-import { Avatar, AvatarFallback, AvatarImage } from "../../ui/avatar";
-import BoardComment from "../../comment/board-comment";
+import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
+import BoardComment from "@/components/comment/board-comment";
 import { useAuthStore } from "@/stores/useAuthStore";
-
+import { useRouter } from "next/navigation";
+import { useBoard } from "@/hooks/useBoard";
 export default function MainBoard() {
   // const s3BaseUrl = process.env.NEXT_PUBLIC_S3_BASE_URL;
-  
+
   const params = useParams();
   const boardId = params.id as string;
- 
+  const router = useRouter();
   const { member } = useAuthStore();
 
-  const { data: board, isLoading } = useQuery({
-    queryKey: ["board", boardId],
-    queryFn: () => getBoard(boardId as string),
-  });
+  const { board, isLoading, deleteBoardMutation } = useBoard(boardId);
 
   if (isLoading) return <div>Loading...</div>;
-
   return (
     <>
       <div className="rounded-lg border bg-card shadow-sm mb-8">
         <video width="100%" height="100%" controls>
-          <source 
-          // src={`${s3BaseUrl}/${board?.videoUrl}`} 
-          src={`${process.env.NEXT_PUBLIC_TEMP_VIDEO_URL}`}
-          type="video/mp4" />
+          <source
+            // src={`${s3BaseUrl}/${board?.videoUrl}`}
+            src={`${process.env.NEXT_PUBLIC_TEMP_VIDEO_URL}`}
+            type="video/mp4"
+          />
           <track kind="subtitles" src="subtitles.vtt" label="English" />
         </video>
         <div className="p-4">
           <div className="flex items-center justify-between">
             <h1 className="text-2xl font-bold">{board?.title}</h1>
-            {
-              board?.member.id === member?.id && (
-                <div className="flex items-center gap-2">
-                  <Button variant="ghost" size="sm">
-                    <Pencil className="h-5 w-5" />
-              </Button>
-              <Button variant="destructive" size="sm">
-                <Trash2 className="h-5 w-5 text-white" />
-                  </Button>
-                </div>
-              )
-            }
+            {board?.member.id === member?.id && (
+              <div className="flex items-center gap-2">
+                <Button
+                  className="hover:bg-gray-100 cursor-pointer"
+                  variant="ghost"
+                  size="sm"
+                  onClick={() => {
+                    router.push(`/board/edit/${boardId}`);
+                  }}
+                >
+                  <Pencil className="h-5 w-5" />
+                </Button>
+                <Button
+                  className="bg-red-500 hover:bg-red-600 cursor-pointer"
+                  variant="destructive"
+                  size="sm"
+                  onClick={() => {
+                    if (confirm("정말 삭제하시겠습니까?")) {
+                      deleteBoardMutation(boardId);
+                      router.push("/");
+                    }
+                  }}
+                >
+                  <Trash2 className="h-5 w-5 text-white" />
+                </Button>
+              </div>
+            )}
           </div>
           <div className="mt-2 flex items-center justify-between">
             <div className="flex items-center gap-2">

@@ -1,6 +1,8 @@
+"use client";
+
 import { Board } from "@/types/board";
 import { BoardRequest } from "@/types/board";
-import { api } from "./axios-instance";
+import axios from "axios";
 
 // GET METHODS
 export async function getBoards(
@@ -10,7 +12,7 @@ export async function getBoards(
 ): Promise<Board[]> {
   if (!desc) desc = true;
   try {
-    const response = await api.get<Board[]>(`/board`, {
+    const response = await axios.get<Board[]>(`/api/board`, {
       params: {
         ...(category && { category }),
         ...(sort && { sort }),
@@ -18,6 +20,7 @@ export async function getBoards(
       },
       withCredentials: true,
     });
+    console.log(response.data);
     return response.data;
   } catch (error) {
     throw error;
@@ -30,8 +33,9 @@ export async function getBoardByFollow(
   desc?: boolean | null
 ): Promise<Board[]> {
   if (!desc) desc = true;
+
   try {
-    const response = await api.get<Board[]>(`/board/follow`, {
+    const response = await axios.get<Board[]>(`/api/board/follow`, {
       params: {
         ...(category && { category }),
         ...(sort && { sort }),
@@ -47,7 +51,7 @@ export async function getBoardByFollow(
 
 export async function getBoard(id: string): Promise<Board> {
   try {
-    const response = await api.get<Board>(`/board/${id}`);
+    const response = await axios.get<Board>(`/api/board/${id}`);
     return response.data;
   } catch (error) {
     throw error;
@@ -56,7 +60,7 @@ export async function getBoard(id: string): Promise<Board> {
 
 // PATCH METHODS
 export async function likeBoard(id: string): Promise<number> {
-  const response = await api.patch<Board>(`/board/like/${id}`);
+  const response = await axios.patch<Board>(`/api/board/like/${id}`);
   return response.status;
 }
 
@@ -72,7 +76,7 @@ export async function updateBoard(
     new Blob([JSON.stringify(boardRequest)], { type: "application/json" })
   );
 
-  const response = await api.patch<Board>(`/board/${id}`, formData, {
+  const response = await axios.patch<Board>(`/api/board/${id}`, formData, {
     headers: {
       "Content-Type": "multipart/form-data",
     },
@@ -94,18 +98,18 @@ export async function setBoard(
     "dto",
     new Blob([JSON.stringify(boardRequest)], { type: "application/json" })
   );
-  const response = await api.post('http://localhost:8081/api/board', formData, {
+  const response = await axios.post("/api/board", formData, {
     headers: {
       "Content-Type": "multipart/form-data",
     },
     withCredentials: true,
   });
-    return response.status;
+  return response.status;
 }
 
 // DELETE METHODS
 export async function deleteBoard(id: string): Promise<number> {
-  const response = await api.delete<Board>(`/board/${id}`, {
+  const response = await axios.delete<Board>(`/api/board/${id}`, {
     withCredentials: true,
   });
   return response.status;

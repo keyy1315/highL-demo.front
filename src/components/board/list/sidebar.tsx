@@ -1,63 +1,107 @@
-import { topics } from "@/types/topics";
-import Link from "next/link";
+"use client";
 
-interface SidebarProps {
-  currentparam?: string;
-}
+import { useSidebarStore } from "@/stores/useSidebarStore";
+import { Package, Plus, ShieldHalf, Sparkles, Vote } from "lucide-react";
+import { useRouter } from "next/navigation";
+import { useCategory } from "@/hooks/useCategory";
+import { useAuthStore } from "@/stores/useAuthStore";
+import { defaultCategories } from "@/hooks/useCategory";
 
-export default function Sidebar({ currentparam }: SidebarProps) {
+export default function Sidebar() {
+  const isOpen = useSidebarStore((state) => state.isOpen);
+  const setOpen = useSidebarStore((state) => state.setOpen);
+  const { categories } = useCategory();
+  const { isLoggedIn } = useAuthStore();
+  const router = useRouter();
+
+  const handleOverlayClick = () => {
+    setOpen(false);
+  };
+
+  const handleCategoryClick = (categoryId: string) => {
+    router.push(`/board?category=${categoryId}`);
+  };
+
   return (
-    <aside className="hidden space-y-6 md:block">
-      <div className="rounded-lg border bg-card p-4 shadow-sm">
-        <h2 className="mb-4 text-lg font-semibold">Trending Topics</h2>
-        <div className="space-y-2">
-          {topics.map((topic) => (
-            <Link
-              key={topic.id}
-              href={`/topic/${topic.id}`}
-              className={`flex items-center gap-2 rounded-md px-2 py-1.5 transition-colors ${
-                currentparam === topic.id
-                  ? "bg-primary/10 text-primary font-medium"
-                  : "hover:bg-muted"
-              }`}
+    <>
+      {/* Overlay */}
+      <div
+        className={`fixed top-16 left-0 right-0 bottom-0 z-40 bg-black/50 transition-opacity duration-200 md:hidden ${
+          isOpen ? "opacity-100" : "opacity-0 pointer-events-none"
+        }`}
+        onClick={handleOverlayClick}
+      />
+
+      {/* Sidebar */}
+      <aside
+        className={`fixed top-16 left-0 h-[calc(100vh-4rem)] w-78 transform bg-background p-4 transition-all duration-200 ease-in-out md:relative md:top-0 md:translate-x-0 ${
+          isOpen ? "translate-x-0 z-50" : "-translate-x-full z-0"
+        }`}
+      >
+        <div className="space-y-6 w-full">
+          {defaultCategories.map((category) => (
+            <div
+              key={category.id}
+              className="rounded-lg border bg-card p-4 shadow-sm cursor-pointer hover:bg-accent"
+              onClick={() => handleCategoryClick(category.id)}
             >
-              <div
-                className={`h-2 w-2 rounded-full ${
-                  currentparam === topic.id ? "bg-primary" : "bg-primary/60"
-                }`}
-              ></div>
-              <span>{topic.name}</span>
-            </Link>
+              <div className="space-y-2">
+                <h2 className="text-lg font-semibold flex items-center gap-2">
+                  {category.name === "TFT" && (
+                    <ShieldHalf className="w-4 h-4" />
+                  )}
+                  {category.name === "HIGHLIGHTS" && (
+                    <Sparkles className="w-4 h-4" />
+                  )}
+                  {category.name === "VOTE" && <Vote className="w-4 h-4" />}
+                  {!["TFT", "HIGHLIGHTS", "VOTE"].includes(category.name) && (
+                    <Package className="w-4 h-4" />
+                  )}
+                  {category.name}
+                </h2>
+                <p className="text-sm text-muted-foreground">
+                  {category.description}
+                </p>
+              </div>
+            </div>
           ))}
-        </div>
-      </div>
-      <div className="rounded-lg border bg-card p-4 shadow-sm">
-        <h2 className="mb-4 text-lg font-semibold">Suggested Creators</h2>
-        <div className="space-y-4">
-          {[
-            { name: "Alex Kim", followers: "1.2M" },
-            { name: "Jessica Park", followers: "845K" },
-            { name: "David Lee", followers: "623K" },
-          ].map((creator) => (
-            <Link
-              key={creator.name}
-              href={`/user/${creator.name.toLowerCase()}`}
-              className={`flex items-center gap-2 rounded-md px-2 py-1.5 transition-colors ${
-                currentparam === creator.name
-                  ? "bg-primary/10 text-primary font-medium"
-                  : "hover:bg-muted"
-              }`}
+          {categories?.map((category) => (
+            <div
+              key={category.id}
+              className="rounded-lg border bg-card p-4 shadow-sm cursor-pointer hover:bg-accent"
+              onClick={() => handleCategoryClick(category.id)}
             >
-              <div
-                className={`h-2 w-2 rounded-full ${
-                  currentparam === creator.name ? "bg-primary" : "bg-primary/60"
-                }`}
-              ></div>
-              <span>{creator.name}</span>
-            </Link>
+              <div className="space-y-2">
+                <h2 className="text-lg font-semibold flex items-center gap-2">
+                  <Package className="w-4 h-4" />
+                  {category.name}
+                </h2>
+                <p className="text-sm text-muted-foreground">
+                  {category.description}
+                </p>
+              </div>
+            </div>
           ))}
+          {isLoggedIn && (
+            <div
+              className="rounded-lg border-2 border-dashed border-muted-foreground/30 bg-muted/30 p-4 shadow-sm cursor-pointer hover:bg-muted/50 transition-colors"
+              onClick={() => {
+                console.log("add category");
+              }}
+            >
+              <div className="space-y-2">
+                <h2 className="text-lg font-semibold flex items-center gap-2 text-muted-foreground">
+                  <Plus className="w-4 h-4" />
+                  ADD CATEGORY
+                </h2>
+                <p className="text-sm text-muted-foreground">
+                  카테고리 추가하기
+                </p>
+              </div>
+            </div>
+          )}
         </div>
-      </div>
-    </aside>
+      </aside>
+    </>
   );
 }

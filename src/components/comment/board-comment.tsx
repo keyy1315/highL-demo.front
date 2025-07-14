@@ -1,10 +1,9 @@
 import { useState } from "react";
 import CommentForm from "./comment-form";
 import CommentList from "./comment-list";
-import { useQuery } from "@tanstack/react-query";
-import { getComments } from "@/lib/api/commentApi";
+import { useComments } from "@/hooks/useComments";
 import { Comment } from "@/types/comment";
-import { useNotificationContext } from "@/context/notification-context";
+import { useNotificationContext } from "@/context/notificationContext";
 
 interface BoardCommentProps {
   boardId: string;
@@ -19,17 +18,12 @@ export default function BoardComment({ boardId }: BoardCommentProps) {
   const { sendNotification } = useNotificationContext();
   const [replyTarget, setReplyTarget] = useState<ReplyTarget | null>(null);
 
-  const {
-    data: comments,
-    isLoading,
-    refetch,
-  } = useQuery({
-    queryKey: ["comments", boardId],
-    queryFn: () => getComments(boardId),
-  });
+  const { comments, isLoading } = useComments(boardId);
 
   const handleCommentClick = (comment: Comment) => {
-    const targetParentId = comment.parentCommentId ? comment.parentCommentId : comment.id;
+    const targetParentId = comment.parentCommentId
+      ? comment.parentCommentId
+      : comment.id;
     const targetReplyingTo = comment.member.id;
     setReplyTarget({
       parentId: targetParentId,
@@ -43,7 +37,6 @@ export default function BoardComment({ boardId }: BoardCommentProps) {
 
   const handleSuccess = () => {
     setReplyTarget(null);
-    refetch();
     sendNotification({
       action: "COMMENT",
       referenceType: "board",

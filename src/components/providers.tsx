@@ -1,21 +1,37 @@
-'use client';
+"use client";
 
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
-import { NotificationProvider } from "@/context/notification-context";
-import { Providers } from "./error/providers";
+import { NotificationProvider } from "@/context/notificationContext";
+import { ThemeProvider } from "next-themes";
+import { Member } from "@/types/member";
+import { useAuthStore } from "@/stores/useAuthStore";
 
 const queryClient = new QueryClient();
 
+interface ProvidersWrapperProps {
+  children: React.ReactNode;
+  member: Member | null;
+}
+
 export default function ProvidersWrapper({
   children,
-}: {
-  children: React.ReactNode;
-}) {
+  member,
+}: ProvidersWrapperProps) {
+  const { setMember, setIsLoggedIn } = useAuthStore();
+  if (member) {
+    setMember(member);
+    setIsLoggedIn(true);
+  }
   return (
     <QueryClientProvider client={queryClient}>
-      <NotificationProvider>
-        <Providers>{children}</Providers>
-      </NotificationProvider>
+      <ThemeProvider
+        attribute="class"
+        defaultTheme="system"
+        enableSystem
+        disableTransitionOnChange
+      >
+        <NotificationProvider>{children}</NotificationProvider>
+      </ThemeProvider>
     </QueryClientProvider>
   );
-} 
+}

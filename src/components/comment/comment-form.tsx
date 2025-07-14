@@ -1,11 +1,10 @@
 "use client";
 
 import { useState, useEffect } from "react";
-import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { CommentRequest } from "@/types/comment";
-import { createComment } from "@/lib/api/commentApi";
+import { useComments } from "@/hooks/useComments";
 
 interface CommentFormProps {
   boardId: string;
@@ -27,43 +26,31 @@ export default function CommentForm({
   useEffect(() => {
     setContent(initialContent);
   }, [initialContent]);
-
-  const queryClient = useQueryClient();
-  const mutation = useMutation({
-    mutationFn: createComment,
-    onSuccess: () => {
-      setContent(""); // Clear input after successful submission
-      queryClient.invalidateQueries({ queryKey: ["comments", boardId] });
-    },
-    onError: (error) => {
-       console.error("Failed to create comment:", error);
-       // Optionally: Add user feedback like a toast notification
-    }
-  });
+  const { createCommentMutation, isCreatingComment } = useComments(boardId);
 
   const handleSubmit = () => {
-    if (!content.trim()) return; // Prevent submitting empty comments
+    if (!content.trim()) return;
 
     const commentRequest: CommentRequest = {
       content: content.trim(),
       parentId,
       boardId,
     };
-    mutation.mutate(commentRequest);
+    createCommentMutation(commentRequest);
+    setContent("");
   };
 
   const handleKeyDown = (e: React.KeyboardEvent<HTMLInputElement>) => {
-    // Submit on Enter unless Shift is pressed
     if (e.key === 'Enter' && !e.shiftKey) {
-      e.preventDefault(); // Prevent default Enter behavior (like line break in textarea)
+      e.preventDefault();
       handleSubmit();
     }
   }
 
   const handleCancel = () => {
-    setContent(""); // Clear content
+    setContent("");
     if (onCancel) {
-      onCancel(); // Call the cancel callback
+      onCancel();
     }
   }
 
@@ -80,10 +67,10 @@ export default function CommentForm({
         <Button
           onClick={handleSubmit}
           variant="default"
-          disabled={mutation.isPending || !content.trim()}
+          disabled={isCreatingComment || !content.trim()}
           aria-label={parentId ? "Submit Reply" : "Submit Comment"}
         >
-          {mutation.isPending ? "Submitting..." : (parentId ? "Reply" : "Comment")}
+          {isCreatingComment ? "Submitting..." : (parentId ? "Reply" : "Comment")}
         </Button>
         {parentId && onCancel && (
           <Button

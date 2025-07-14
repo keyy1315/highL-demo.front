@@ -8,36 +8,38 @@ import {
   CardDescription,
   CardContent,
   CardFooter,
-} from "../ui/card";
-import { Label } from "../ui/label";
-import { Input } from "../ui/input";
-import { useAuthFormStore } from "@/stores/useAuthFormStore";
-import { Button } from "../ui/button";
-import { login } from "@/lib/api/loginApi";
+} from "@/components/ui/card";
+import { Label } from "@/components/ui/label";
+import { Input } from "@/components/ui/input";
+import { Button } from "@/components/ui/button";
 import { signup } from "@/lib/api/memberApi";
-import { useErrorStore } from "@/stores/useErrorStore";
 import { useRouter } from "next/navigation";
+import { useAuthStore } from "@/stores/useAuthStore";
 
 export default function LoginForm() {
+  const { login } = useAuthStore();
+
   const [isSignUp, setIsSignUp] = useState(false);
-  const { form, setField, resetForm } = useAuthFormStore();
-  const showError = useErrorStore.getState().showError;
+  const [form, setForm] = useState({
+    userId: "",
+    password: "",
+  });
   const router = useRouter();
 
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     if (isSignUp) {
       await signup(form);
-      showError("회원가입이 완료되었습니다.", "SUCCESS");
       setIsSignUp(false);
-      resetForm();
+      setForm({
+        userId: "",
+        password: "",
+      });
     } else {
       try {
-        await login(form);
+        await login(form.userId, form.password);
         router.push("/");
-      } catch {
-        showError("로그인에 실패했습니다.", "ERROR");
-      }
+      } catch {}
     }
   };
 
@@ -62,7 +64,7 @@ export default function LoginForm() {
               type="text"
               placeholder="Enter your ID"
               value={form.userId}
-              onChange={(e) => setField("userId", e.target.value)}
+              onChange={(e) => setForm({ ...form, userId: e.target.value })}
               required
             />
           </div>
@@ -73,7 +75,7 @@ export default function LoginForm() {
               type="password"
               placeholder="Enter your Password"
               value={form.password}
-              onChange={(e) => setField("password", e.target.value)}
+              onChange={(e) => setForm({ ...form, password: e.target.value })}
               required
             />
           </div>

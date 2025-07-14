@@ -13,7 +13,6 @@ import {
   CardTitle,
 } from "../../ui/card";
 import { Input } from "../../ui/input";
-import { topics } from "@/types/topics";
 import {
   Select,
   SelectContent,
@@ -25,10 +24,12 @@ import { Label } from "../../ui/label";
 import { useRouter } from "next/navigation";
 import { useState } from "react";
 import { Textarea } from "../../ui/textarea";
-import { setBoard } from "@/lib/api/boardApi";
 import { BoardRequest } from "@/types/board";
+import { useBoard } from "@/hooks/useBoard";
+import { useCategory } from "@/hooks/useCategory";
 
 export default function BoardForm() {
+  const { categories } = useCategory();
   const [videoFile, setVideoFile] = useState<File | null>(null);
   const [images, setImages] = useState<Array<{ file: File; preview: string }>>(
     []
@@ -41,6 +42,8 @@ export default function BoardForm() {
     tags: [],
   });
   const router = useRouter();
+
+  const { setBoardMutation } = useBoard();
 
   const handleDragOver = (e: React.DragEvent) => {
     e.preventDefault();
@@ -122,27 +125,29 @@ export default function BoardForm() {
     }
   };
 
-  const handleInputChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
+  const handleInputChange = (
+    e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>
+  ) => {
     const { name, value } = e.target;
-    setForm(prev => ({ ...prev, [name]: value }));
+    setForm((prev) => ({ ...prev, [name]: value }));
   };
 
   const handleCategoryChange = (value: string) => {
-    setForm(prev => ({ ...prev, category: value }));
+    setForm((prev) => ({ ...prev, category: value }));
   };
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     console.log("formData : ", form);
     console.log("videoFile : ", videoFile);
-    await setBoard(videoFile, form);
-    setForm({
-      title: "",
-      content: "",
-      category: "",
-      tags: [],
-    });
-    router.push("/");
+    setBoardMutation(
+      { boardRequest: form, file: videoFile },
+      {
+        onSuccess: () => {
+          // router.push("/");
+        },
+      }
+    );
   };
 
   const removeTag = (tag: string) => {
@@ -406,9 +411,9 @@ export default function BoardForm() {
                   <SelectValue placeholder="Select a category" />
                 </SelectTrigger>
                 <SelectContent>
-                  {topics.map((topic) => (
-                    <SelectItem key={topic.id} value={topic.id}>
-                      {topic.name}
+                  {categories.map((category) => (
+                    <SelectItem key={category.id} value={category.id}>
+                      {category.name}
                     </SelectItem>
                   ))}
                 </SelectContent>

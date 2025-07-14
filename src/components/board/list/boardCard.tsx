@@ -23,24 +23,15 @@ export function BoardCard({ board, isLiked, onLike }: BoardCardProps) {
         <div className="flex items-start justify-between">
           <div className="flex items-center gap-3">
             <Avatar>
-              <AvatarImage
-                src={board.member.iconUrl}
-                alt={board.member.id}
-              />
-              <AvatarFallback>
-                {board.member.id.charAt(0)}
-              </AvatarFallback>
+              <AvatarImage src={board.member.iconUrl} alt={board.member.id} />
+              <AvatarFallback>{board.member.id.charAt(0)}</AvatarFallback>
             </Avatar>
             <div>
               <div className="flex items-center space-x-2">
                 <p className="font-medium">{board.member.gameName}</p>
-                <p className="text-sm text-gray-500">
-                  #{board.member.tagLine}
-                </p>
+                <p className="text-sm text-gray-500">#{board.member.tagLine}</p>
               </div>
-              <p className="text-sm text-muted-foreground">
-                {board.member.id}
-              </p>
+              <p className="text-sm text-muted-foreground">{board.member.id}</p>
             </div>
           </div>
           <Button
@@ -51,10 +42,10 @@ export function BoardCard({ board, isLiked, onLike }: BoardCardProps) {
             <MoreHorizontal className="h-5 w-5" />
           </Button>
         </div>
-        
+
         <h3 className="mt-4 text-xl font-semibold">{board.title}</h3>
         <p className="mt-2 text-muted-foreground">{board.content}</p>
-        
+
         <div className="mt-3 flex flex-wrap gap-2">
           {board.tags.map((tag) => (
             <Badge key={tag.id} variant="secondary">
@@ -72,7 +63,6 @@ export function BoardCard({ board, isLiked, onLike }: BoardCardProps) {
       >
         <source
           // src={`https://highl-file.s3.ap-northeast-2.amazonaws.com/${board.videoUrl}`}
-          src={`${process.env.NEXT_PUBLIC_TEMP_VIDEO_URL}`}
           type="video/mp4"
         />
       </video>
@@ -108,4 +98,4 @@ export function BoardCard({ board, isLiked, onLike }: BoardCardProps) {
       </div>
     </div>
   );
-} 
+}
