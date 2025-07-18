@@ -5,14 +5,14 @@ import { useAuthStore } from "@/stores/useAuthStore";
 
 export const defaultCategories: Category[] = [
   {
-    id: "default-0",
+    id: "00000000-0000-0000-0000-000000000002",
     name: "VOTE",
     description: "투표 영상 모아보기",
     createdDate: new Date(),
     updatedDate: new Date(),
   },
   {
-    id: "default-1",
+    id: "00000000-0000-0000-0000-000000000001",
     name: "TFT",
     description: "롤토체스 영상 모아보기",
     createdDate: new Date(),
@@ -20,7 +20,7 @@ export const defaultCategories: Category[] = [
   },
 
   {
-    id: "default-2",
+    id: "00000000-0000-0000-0000-000000000000",
     name: "HIGHLIGHTS",
     description: "하이라이트 영상 모아보기",
     createdDate: new Date(),
@@ -35,6 +35,7 @@ export function useCategory() {
     queryFn: () => getCategories(),
     enabled: isLoggedIn,
   });
+  const allCategories = categories ? categories : defaultCategories;
 
-  return { categories: categories as Category[] };
+  return { categories: allCategories as Category[] };
 }

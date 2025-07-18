@@ -23,7 +23,13 @@ export const useAuthStore = create<AuthState>((set) => ({
   login: async (userId: string, password: string) => {
     try {
       const response = await login({ userId, password });
-      set({ member: response.data, isLoggedIn: true });
+      const member = response.data;
+      set({ member, isLoggedIn: true });
+
+      if (member && member.id) {
+        const encryptedMemberId = btoa(member.id);
+        localStorage.setItem(`${process.env.LOCAL_STORAGE_KEY}`, encryptedMemberId);
+      }
     } catch (error) {
       if (axios.isAxiosError(error) && error.response) {
         set({ isLoggedIn: false });
@@ -34,6 +40,7 @@ export const useAuthStore = create<AuthState>((set) => ({
     try {
       await logout();
       set({ isLoggedIn: false, member: null });
+      localStorage.removeItem("memberId");
     } catch (error) {
       if (axios.isAxiosError(error) && error.response) {
       }

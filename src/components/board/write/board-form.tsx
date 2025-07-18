@@ -38,7 +38,7 @@ export default function BoardForm() {
   const [form, setForm] = useState<BoardRequest>({
     title: "",
     content: "",
-    category: "",
+    categoryId: "",
     tags: [],
   });
   const router = useRouter();
@@ -133,7 +133,7 @@ export default function BoardForm() {
   };
 
   const handleCategoryChange = (value: string) => {
-    setForm((prev) => ({ ...prev, category: value }));
+    setForm((prev) => ({ ...prev, categoryId: value }));
   };
 
   const handleSubmit = async (e: React.FormEvent) => {
@@ -158,7 +158,7 @@ export default function BoardForm() {
   };
 
   return (
-    <div className="col-span-2 space-y-6">
+    <div className="space-y-6">
       <Card>
         <CardHeader>
           <CardTitle className="text-2xl font-bold">Video Upload</CardTitle>
@@ -246,7 +246,10 @@ export default function BoardForm() {
           </CardHeader>
           <CardContent className="space-y-6">
             <div className="space-y-2">
-              <Label htmlFor="title">Title</Label>
+              <Label htmlFor="title">
+                <span className="text-red-500 mr-1">*</span>
+                Title
+              </Label>
               <Input
                 id="title"
                 name="title"
@@ -258,7 +261,10 @@ export default function BoardForm() {
             </div>
 
             <div className="space-y-2">
-              <Label htmlFor="content">Description</Label>
+              <Label htmlFor="content">
+                <span className="text-red-500 mr-1">*</span>
+                Description
+              </Label>
               <Textarea
                 id="content"
                 name="content"
@@ -402,9 +408,12 @@ export default function BoardForm() {
             </div>
 
             <div className="space-y-2">
-              <Label htmlFor="category">Category</Label>
+              <Label htmlFor="category">
+                <span className="text-red-500 mr-1">*</span>
+                Category
+              </Label>
               <Select
-                value={form.category}
+                value={form.categoryId}
                 onValueChange={handleCategoryChange}
               >
                 <SelectTrigger id="category">
@@ -428,7 +437,16 @@ export default function BoardForm() {
             >
               Cancel
             </Button>
-            <Button type="submit" disabled={!videoFile}>
+            <Button
+              type="submit"
+              disabled={
+                !videoFile ||
+                !form.title.trim() ||
+                !form.content.trim() ||
+                !form.categoryId
+              }
+              style={{ cursor: "pointer" }}
+            >
               {"Publish Video"}
             </Button>
           </CardFooter>

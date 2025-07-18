@@ -5,7 +5,6 @@ import { Package, Plus, ShieldHalf, Sparkles, Vote } from "lucide-react";
 import { useRouter } from "next/navigation";
 import { useCategory } from "@/hooks/useCategory";
 import { useAuthStore } from "@/stores/useAuthStore";
-import { defaultCategories } from "@/hooks/useCategory";
 
 export default function Sidebar() {
   const isOpen = useSidebarStore((state) => state.isOpen);
@@ -39,7 +38,7 @@ export default function Sidebar() {
         }`}
       >
         <div className="space-y-6 w-full">
-          {defaultCategories.map((category) => (
+          {categories.map((category) => (
             <div
               key={category.id}
               className="rounded-lg border bg-card p-4 shadow-sm cursor-pointer hover:bg-accent"
@@ -57,23 +56,6 @@ export default function Sidebar() {
                   {!["TFT", "HIGHLIGHTS", "VOTE"].includes(category.name) && (
                     <Package className="w-4 h-4" />
                   )}
-                  {category.name}
-                </h2>
-                <p className="text-sm text-muted-foreground">
-                  {category.description}
-                </p>
-              </div>
-            </div>
-          ))}
-          {categories?.map((category) => (
-            <div
-              key={category.id}
-              className="rounded-lg border bg-card p-4 shadow-sm cursor-pointer hover:bg-accent"
-              onClick={() => handleCategoryClick(category.id)}
-            >
-              <div className="space-y-2">
-                <h2 className="text-lg font-semibold flex items-center gap-2">
-                  <Package className="w-4 h-4" />
                   {category.name}
                 </h2>
                 <p className="text-sm text-muted-foreground">

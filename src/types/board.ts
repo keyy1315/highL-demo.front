@@ -17,7 +17,7 @@ export interface Board {
 export interface BoardRequest {
     title: string;
     content: string;
-    category: string;
+    categoryId: string;
     tags: string[];
   }
   

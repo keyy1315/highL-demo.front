@@ -1,6 +1,6 @@
 import { CommentRequest } from "@/types/comment";
-import axios from "axios";
 import { tryCatch } from "../utils";
+import axios from "axios";
 
 export async function getComments(boardId: string, sort?: string, desc?: boolean) {
     return tryCatch(async () => {

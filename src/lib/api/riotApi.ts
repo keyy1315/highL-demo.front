@@ -2,8 +2,6 @@ import axios from "axios";
 import { tryCatch } from "../utils";
 const RIOT_ASIA_BASE_URL = "https://asia.api.riotgames.com";
 
-
-
 export async function getPuuid(username: string, tag: string) {
   return tryCatch(async () => {
     const response = await axios.get(

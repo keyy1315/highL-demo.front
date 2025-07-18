@@ -40,7 +40,7 @@ export async function getBoardByFollow(
         ...(sort && { sort }),
         ...(desc && { desc }),
       },
-      withCredentials: true,
+      withCredentials: true, 
     });
     return response.data;
   });

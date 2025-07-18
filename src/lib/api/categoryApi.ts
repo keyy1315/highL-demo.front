@@ -1,5 +1,5 @@
-import axios from "axios";
 import { tryCatch } from "../utils";
+import axios from "axios";
 
 export async function getCategories() {
   return tryCatch(async () => {

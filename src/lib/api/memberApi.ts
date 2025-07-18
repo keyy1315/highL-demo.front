@@ -1,6 +1,6 @@
 import { LoginRequest, Member } from "@/types/member";
-import axios from "axios";
 import { tryCatch } from "../utils";
+import axios from "axios";
 
 export async function getMember(userId: string) {
   return tryCatch(async () => {

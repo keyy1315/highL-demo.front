@@ -9,9 +9,13 @@ export default function WritePage() {
           <h1 className="text-3xl font-bold">Write New Post</h1>
           <p className="text-muted-foreground">Share your Highlights In Game</p>
         </div>
-        <div className="grid grid-cols-3 gap-6">
-          <BoardForm />
-          <BoardSideForm />
+        <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
+          <div className="lg:col-span-2">
+            <BoardForm />
+          </div>
+          <div className="lg:col-span-1">
+            <BoardSideForm />
+          </div>
         </div>
       </main>
     </div>
