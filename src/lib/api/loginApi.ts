@@ -1,8 +1,9 @@
 import axios from "axios";
 import { LoginRequest } from "@/types/member";
+import { tryCatch } from "../utils";
 
 export async function login(loginRequest: LoginRequest) {
-  try {
+  return tryCatch(async () => {
     const response = await axios.post(
       `${process.env.NEXT_PUBLIC_API_URL}/api/login`,
       loginRequest,
@@ -11,13 +12,11 @@ export async function login(loginRequest: LoginRequest) {
       }
     );
     return response;
-  } catch (error) {
-    throw error;
-  }
+  });
 }
 
 export async function logout() {
-  try {
+  return tryCatch(async () => {
     const response = await axios.get(
       `${process.env.NEXT_PUBLIC_API_URL}/logout`,
       {
@@ -25,8 +24,5 @@ export async function logout() {
       }
     );
     return response.data;
-  } catch (error) {
-    throw error;
-  }
+  });
 }
-

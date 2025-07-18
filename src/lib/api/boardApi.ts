@@ -3,6 +3,7 @@
 import { Board } from "@/types/board";
 import { BoardRequest } from "@/types/board";
 import axios from "axios";
+import { tryCatch } from "../utils";
 
 // GET METHODS
 export async function getBoards(
@@ -10,8 +11,8 @@ export async function getBoards(
   sort?: string | null,
   desc?: boolean | null
 ): Promise<Board[]> {
-  if (!desc) desc = true;
-  try {
+  return tryCatch(async () => {
+    if (!desc) desc = true;
     const response = await axios.get<Board[]>(`/api/board`, {
       params: {
         ...(category && { category }),
@@ -22,9 +23,7 @@ export async function getBoards(
     });
     console.log(response.data);
     return response.data;
-  } catch (error) {
-    throw error;
-  }
+  });
 }
 
 export async function getBoardByFollow(
@@ -32,9 +31,9 @@ export async function getBoardByFollow(
   sort?: string | null,
   desc?: boolean | null
 ): Promise<Board[]> {
-  if (!desc) desc = true;
+  return tryCatch(async () => {
+    if (!desc) desc = true;
 
-  try {
     const response = await axios.get<Board[]>(`/api/board/follow`, {
       params: {
         ...(category && { category }),
@@ -44,24 +43,26 @@ export async function getBoardByFollow(
       withCredentials: true,
     });
     return response.data;
-  } catch (error) {
-    throw error;
-  }
+  });
 }
 
 export async function getBoard(id: string): Promise<Board> {
-  try {
-    const response = await axios.get<Board>(`/api/board/${id}`);
+  return tryCatch(async () => {
+    const response = await axios.get<Board>(`/api/board/${id}`, {
+      withCredentials: true,
+    });
     return response.data;
-  } catch (error) {
-    throw error;
-  }
+  });
 }
 
 // PATCH METHODS
 export async function likeBoard(id: string): Promise<number> {
-  const response = await axios.patch<Board>(`/api/board/like/${id}`);
-  return response.status;
+  return tryCatch(async () => {
+    const response = await axios.patch<Board>(`/api/board/like/${id}`, {
+      withCredentials: true,
+    });
+    return response.status;
+  });
 }
 
 export async function updateBoard(
@@ -69,20 +70,22 @@ export async function updateBoard(
   file: File,
   boardRequest: BoardRequest
 ): Promise<number> {
-  const formData = new FormData();
-  formData.append("file", file);
-  formData.append(
-    "dto",
-    new Blob([JSON.stringify(boardRequest)], { type: "application/json" })
-  );
+  return tryCatch(async () => {
+    const formData = new FormData();
+    formData.append("file", file);
+    formData.append(
+      "dto",
+      new Blob([JSON.stringify(boardRequest)], { type: "application/json" })
+    );
 
-  const response = await axios.patch<Board>(`/api/board/${id}`, formData, {
-    headers: {
-      "Content-Type": "multipart/form-data",
-    },
-    withCredentials: true,
+    const response = await axios.patch<Board>(`/api/board/${id}`, formData, {
+      headers: {
+        "Content-Type": "multipart/form-data",
+      },
+      withCredentials: true,
+    });
+    return response.status;
   });
-  return response.status;
 }
 
 // POST METHODS
@@ -90,27 +93,31 @@ export async function setBoard(
   file: File | null,
   boardRequest: BoardRequest
 ): Promise<number> {
-  const formData = new FormData();
-  if (file) {
-    formData.append("file", file);
-  }
-  formData.append(
-    "dto",
-    new Blob([JSON.stringify(boardRequest)], { type: "application/json" })
-  );
-  const response = await axios.post("/api/board", formData, {
-    headers: {
-      "Content-Type": "multipart/form-data",
-    },
-    withCredentials: true,
+  return tryCatch(async () => {
+    const formData = new FormData();
+    if (file) {
+      formData.append("file", file);
+    }
+    formData.append(
+      "dto",
+      new Blob([JSON.stringify(boardRequest)], { type: "application/json" })
+    );
+    const response = await axios.post("/api/board", formData, {
+      headers: {
+        "Content-Type": "multipart/form-data",
+      },
+      withCredentials: true,
+    });
+    return response.status;
   });
-  return response.status;
 }
 
 // DELETE METHODS
 export async function deleteBoard(id: string): Promise<number> {
-  const response = await axios.delete<Board>(`/api/board/${id}`, {
-    withCredentials: true,
+  return tryCatch(async () => {
+    const response = await axios.delete<Board>(`/api/board/${id}`, {
+      withCredentials: true,
+    });
+    return response.status;
   });
-  return response.status;
 }

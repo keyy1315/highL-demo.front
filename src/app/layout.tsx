@@ -6,6 +6,7 @@ import ProvidersWrapper from "@/components/providers";
 import Header from "@/components/common/header/header";
 import Footer from "@/components/common/footer";
 import { getMemberByToken } from "@/lib/api/memberApi";
+import { cookies } from "next/headers";
 
 const inter = Inter({ subsets: ["latin"] });
 
@@ -19,12 +20,27 @@ export default async function RootLayout({
 }: {
   children: React.ReactNode;
 }) {
-  const member = await getMemberByToken();
-  
+  const cookieStore = await cookies();
+  const accessToken = cookieStore.get(
+    `${process.env.ACCESS_TOKEN_HEADER}`
+  )?.value;
+  const refreshToken = cookieStore.get(
+    `${process.env.REFRESH_TOKEN_HEADER}`
+  )?.value;
+
+  const cookieHeader = [
+    accessToken ? `${process.env.ACCESS_TOKEN_HEADER}=${accessToken}` : "",
+    refreshToken ? `${process.env.REFRESH_TOKEN_HEADER}=${refreshToken}` : "",
+  ]
+    .filter(Boolean)
+    .join("; ");
+
+  const member = await getMemberByToken(cookieHeader);
+
   return (
     <html lang="en" suppressHydrationWarning>
       <body className={inter.className}>
-        <ProvidersWrapper>
+        <ProvidersWrapper member={member}>
           <Header />
           {children}
           <Footer />

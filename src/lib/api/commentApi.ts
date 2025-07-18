@@ -1,24 +1,24 @@
 import { CommentRequest } from "@/types/comment";
 import axios from "axios";
+import { tryCatch } from "../utils";
 
 export async function getComments(boardId: string, sort?: string, desc?: boolean) {
-    if (!desc) desc = true;
-    if (!sort) sort = "createdDate";
-    try {
+    return tryCatch(async () => {
+        if (!desc) desc = true;
+        if (!sort) sort = "createdDate";
         const response = await axios.get(`/api/comment/${boardId}`, {
             params: {
                 ...(sort && { sort }),
                 ...(desc && { desc }),
             },
+            withCredentials: true,
         });
         return response.data;
-    } catch (error) {
-        throw error;
-    }
+    });
 }
 
 export async function createComment(commentRequest: CommentRequest) {
-    try {
+    return tryCatch(async () => {
         const response = await axios.post(`/api/comment`, commentRequest, {
             withCredentials: true,
             headers: {
@@ -26,29 +26,23 @@ export async function createComment(commentRequest: CommentRequest) {
             },
         });
         return response.data;
-    } catch (error) {
-        throw error;
-    }
+    });
 }
 
 export async function deleteComment(commentId: string) {
-    try {
+    return tryCatch(async () => {
         const response = await axios.delete(`/api/comment/${commentId}`, {
             withCredentials: true,
         });
         return response.data;
-    } catch (error) {
-        throw error;
-    }
+    });
 }
 
 export async function updateComment(commentId: string, commentRequest: CommentRequest) {
-    try {
+    return tryCatch(async () => {
         const response = await axios.patch(`/api/comment/${commentId}`, commentRequest, {
             withCredentials: true,
         });
         return response.data;
-    } catch (error) {
-        throw error;
-    }
+    });
 }
