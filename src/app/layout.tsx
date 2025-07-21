@@ -22,15 +22,15 @@ export default async function RootLayout({
 }) {
   const cookieStore = await cookies();
   const accessToken = cookieStore.get(
-    `${process.env.ACCESS_TOKEN_HEADER}`
+    `${process.env.NEXT_PUBLIC_ACCESS_TOKEN_HEADER}`
   )?.value;
   const refreshToken = cookieStore.get(
-    `${process.env.REFRESH_TOKEN_HEADER}`
+    `${process.env.NEXT_PUBLIC_REFRESH_TOKEN_HEADER}`
   )?.value;
 
   const cookieHeader = [
-    accessToken ? `${process.env.ACCESS_TOKEN_HEADER}=${accessToken}` : "",
-    refreshToken ? `${process.env.REFRESH_TOKEN_HEADER}=${refreshToken}` : "",
+    accessToken ? `${process.env.NEXT_PUBLIC_ACCESS_TOKEN_HEADER}=${accessToken}` : "",
+    refreshToken ? `${process.env.NEXT_PUBLIC_REFRESH_TOKEN_HEADER}=${refreshToken}` : "",
   ]
     .filter(Boolean)
     .join("; ");

@@ -27,6 +27,7 @@ import { Textarea } from "../../ui/textarea";
 import { BoardRequest } from "@/types/board";
 import { useBoard } from "@/hooks/useBoard";
 import { useCategory } from "@/hooks/useCategory";
+import { analyze } from "@/lib/api/boardApi";
 
 export default function BoardForm() {
   const { categories } = useCategory();
@@ -40,6 +41,7 @@ export default function BoardForm() {
     content: "",
     categoryId: "",
     tags: [],
+    label: null,
   });
   const router = useRouter();
 
@@ -138,8 +140,14 @@ export default function BoardForm() {
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    console.log("formData : ", form);
-    console.log("videoFile : ", videoFile);
+    const formData = new FormData();
+    if (videoFile) {
+      formData.append("file", videoFile);
+    }
+
+    const result = await analyze(formData);
+    console.log("result : ", result);
+
     setBoardMutation(
       { boardRequest: form, file: videoFile },
       {

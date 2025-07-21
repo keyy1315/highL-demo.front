@@ -40,7 +40,7 @@ export async function getBoardByFollow(
         ...(sort && { sort }),
         ...(desc && { desc }),
       },
-      withCredentials: true, 
+      withCredentials: true,
     });
     return response.data;
   });
@@ -109,6 +109,20 @@ export async function setBoard(
       withCredentials: true,
     });
     return response.status;
+  });
+}
+
+export async function analyze(formData: FormData) {
+  return tryCatch(async () => {
+    const response = await axios.post("/api/analyze", formData, {
+      headers: {
+        "Content-Type": "multipart/form-data",
+      },
+    });
+    if (response.data.score > 0.65) {
+      return response.data;
+    }
+    return null;
   });
 }
 

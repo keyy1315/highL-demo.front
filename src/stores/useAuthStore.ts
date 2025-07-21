@@ -6,8 +6,10 @@ import { Member } from "@/types/member";
 
 interface AuthState {
   member: Member | null;
+  encodedRefreshKey: string | null;
   isLoggedIn: boolean;
   setMember: (member: Member | null) => void;
+  setEncodedRefreshKey: (encodedRefreshKey: string | null) => void;
   setIsLoggedIn: (isLoggedIn: boolean) => void;
   login: (userId: string, password: string) => Promise<void>;
   logout: () => Promise<void>;
@@ -17,19 +19,16 @@ interface AuthState {
 
 export const useAuthStore = create<AuthState>((set) => ({
   member: null,
+  encodedRefreshKey: null,
   isLoggedIn: false,
   setMember: (member) => set({ member }),
+  setEncodedRefreshKey: (encodedRefreshKey) => set({ encodedRefreshKey }),
   setIsLoggedIn: (isLoggedIn) => set({ isLoggedIn }),
   login: async (userId: string, password: string) => {
     try {
       const response = await login({ userId, password });
       const member = response.data;
       set({ member, isLoggedIn: true });
-
-      if (member && member.id) {
-        const encryptedMemberId = btoa(member.id);
-        localStorage.setItem(`${process.env.LOCAL_STORAGE_KEY}`, encryptedMemberId);
-      }
     } catch (error) {
       if (axios.isAxiosError(error) && error.response) {
         set({ isLoggedIn: false });
@@ -40,7 +39,6 @@ export const useAuthStore = create<AuthState>((set) => ({
     try {
       await logout();
       set({ isLoggedIn: false, member: null });
-      localStorage.removeItem("memberId");
     } catch (error) {
       if (axios.isAxiosError(error) && error.response) {
       }
