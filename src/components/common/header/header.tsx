@@ -1,12 +1,12 @@
 "use client";
 
-import { ModeToggle } from "./mode-toggle";
+import { ModeToggle } from "./modeToggle";
 import Link from "next/link";
-import UserToggle from "./user-toggle";
+import UserToggle from "./userToggle";
 import { useAuthStore } from "@/stores/useAuthStore";
 import { Button } from "../../ui/button";
 import { Plus, Menu } from "lucide-react";
-import { NotificationBell } from "../../notification/notification-bell";
+import { NotificationBell } from "../../notification/notificationBell";
 import { useSidebarStore } from "@/stores/useSidebarStore";
 
 export default function Header() {

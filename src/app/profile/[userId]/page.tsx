@@ -1,6 +1,6 @@
 
-import MemberDetails from "@/components/profile/member-details";
-import MemberBoards from "@/components/profile/member-boards";
+import MemberDetails from "@/components/profile/memberDetails";
+import MemberBoards from "@/components/profile/memberBoards";
 
 export default function MemberPage() {
   return (

@@ -25,8 +25,8 @@ export default function MainBoard() {
       <div className="rounded-lg border bg-card shadow-sm mb-8">
         <video width="100%" height="100%" controls>
           <source
-            // src={`${s3BaseUrl}/${board?.videoUrl}`}
-            src={`${process.env.NEXT_PUBLIC_TEMP_VIDEO_URL}`}
+            src={`${process.env.NEXT_PUBLIC_S3_BASE_URL}/${board.videoUrl}`}
+            // src={"/dummy.mp4"}
             type="video/mp4"
           />
           <track kind="subtitles" src="subtitles.vtt" label="English" />

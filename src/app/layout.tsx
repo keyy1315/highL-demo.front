@@ -2,7 +2,7 @@ import type React from "react";
 import type { Metadata } from "next";
 import { Inter } from "next/font/google";
 import "./globals.css";
-import ProvidersWrapper from "@/components/providers";
+import ProvidersWrapper from "../providers/providers";
 import Header from "@/components/common/header/header";
 import Footer from "@/components/common/footer";
 import { getMemberByToken } from "@/lib/api/memberApi";

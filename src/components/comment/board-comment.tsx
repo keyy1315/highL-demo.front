@@ -3,7 +3,7 @@ import CommentForm from "./comment-form";
 import CommentList from "./comment-list";
 import { useComments } from "@/hooks/useComments";
 import { Comment } from "@/types/comment";
-import { useNotificationContext } from "@/context/notificationContext";
+import { useNotificationContext } from "@/providers/notificationContext";
 
 interface BoardCommentProps {
   boardId: string;

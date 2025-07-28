@@ -17,8 +17,8 @@ export default function Sidebar() {
     setOpen(false);
   };
 
-  const handleCategoryClick = (categoryId: string) => {
-    router.push(`/board?category=${categoryId}`);
+  const handleCategoryClick = (categoryName: string) => {
+    router.push(`/board?category=${categoryName}`);
   };
 
   return (
@@ -42,7 +42,7 @@ export default function Sidebar() {
             <div
               key={category.id}
               className="rounded-lg border bg-card p-4 shadow-sm cursor-pointer hover:bg-accent"
-              onClick={() => handleCategoryClick(category.id)}
+              onClick={() => handleCategoryClick(category.name)}
             >
               <div className="space-y-2">
                 <h2 className="text-lg font-semibold flex items-center gap-2">

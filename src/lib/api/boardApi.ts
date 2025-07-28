@@ -1,6 +1,6 @@
 "use client";
 
-import { Board } from "@/types/board";
+import { Board, VideoAnalyzeResult } from "@/types/board";
 import { BoardRequest } from "@/types/board";
 import axios from "axios";
 import { tryCatch } from "../utils";
@@ -112,7 +112,7 @@ export async function setBoard(
   });
 }
 
-export async function analyze(formData: FormData) {
+export async function analyze(formData: FormData): Promise<VideoAnalyzeResult | null> {
   return tryCatch(async () => {
     const response = await axios.post("/api/analyze", formData, {
       headers: {

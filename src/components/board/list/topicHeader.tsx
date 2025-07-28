@@ -1,14 +1,15 @@
-import { topics } from "@/types/mainCategory";
+import { useCategory } from "@/hooks/useCategory";
 
 interface TopicHeaderProps {
-  topicName: string;
+  categoryName: string;
 }
 
-export default function TopicHeader({ topicName }: TopicHeaderProps) {
+export default function TopicHeader({ categoryName }: TopicHeaderProps) {
+  const { categories } = useCategory();
   return (
     <div className="space-y-2 mb-10">
       <h1 className="text-3xl font-bold tracking-tight">
-        {topics.find((topic) => topic.id === topicName)?.name}
+        {categories.find((category) => category.name === categoryName)?.name}
       </h1>
     </div>
   );

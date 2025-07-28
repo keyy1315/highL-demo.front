@@ -1,5 +1,5 @@
-import BoardForm from "@/components/board/write/board-form";
-import BoardSideForm from "@/components/board/write/board-side-form";
+import BoardForm from "@/components/board/write/boardForm";
+import BoardSideForm from "@/components/board/write/boardOptionForm";
 
 export default function WritePage() {
   return (

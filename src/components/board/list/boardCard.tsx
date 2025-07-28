@@ -4,6 +4,7 @@ import { Button } from "@/components/ui/button";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Badge } from "@/components/ui/badge";
 import { useRouter } from "next/navigation";
+import { env } from "process";
 
 interface BoardCardProps {
   board: Board;
@@ -62,7 +63,8 @@ export function BoardCard({ board, isLiked, onLike }: BoardCardProps) {
         onClick={(e) => e.stopPropagation()}
       >
         <source
-          // src={`https://highl-file.s3.ap-northeast-2.amazonaws.com/${board.videoUrl}`}
+          // src={`${process.env.NEXT_PUBLIC_S3_BASE_URL}/${board.videoUrl}`}
+          src={"/dummy.mp4"}
           type="video/mp4"
         />
       </video>

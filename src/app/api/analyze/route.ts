@@ -8,6 +8,5 @@ export async function POST(request: NextRequest) {
             "Content-Type": "multipart/form-data",
         }
     });
-    console.log(response);
     return NextResponse.json(response.data);
 }
