@@ -24,26 +24,25 @@ import { Label } from "../../ui/label";
 import { useRouter } from "next/navigation";
 import { useState } from "react";
 import { Textarea } from "../../ui/textarea";
-import { BoardRequest } from "@/types/board";
 import { useBoard } from "@/hooks/useBoard";
 import { useCategory } from "@/hooks/useCategory";
 import { analyze } from "@/lib/api/boardApi";
 import { useSpinnerStore } from "@/stores/useSpinnerStore";
+import { BoardRequest } from "@/types/board";
 
-export default function BoardForm() {
+export default function BoardForm({
+  setForm,
+  form,
+}: {
+  setForm: (form: BoardRequest) => void;
+  form: BoardRequest;
+}) {
   const { categories } = useCategory();
   const [videoFile, setVideoFile] = useState<File | null>(null);
   const [images, setImages] = useState<Array<{ file: File; preview: string }>>(
     []
   );
   const [currentTag, setCurrentTag] = useState("");
-  const [form, setForm] = useState<BoardRequest>({
-    title: "",
-    content: "",
-    categoryId: "",
-    tags: [],
-    label: null,
-  });
 
   const router = useRouter();
 
@@ -61,10 +60,10 @@ export default function BoardForm() {
     await analyze(formData)
       .then((result) => {
         if (result) {
-          setForm((prev) => ({
-            ...prev,
+          setForm({
+            ...form,
             label: result.label.toUpperCase(),
-          }));
+          });
           window.neoAlert("Video ready for upload", "Success");
         } else {
           window.neoAlert("you can upload LOL / TFT video only", "Error");
@@ -148,10 +147,10 @@ export default function BoardForm() {
       !form.tags.includes(currentTag.trim()) &&
       form.tags.length < 5
     ) {
-      setForm((prev) => ({
-        ...prev,
-        tags: [...prev.tags, currentTag.trim()],
-      }));
+      setForm({
+        ...form,
+        tags: [...form.tags, currentTag.trim()],
+      });
       setCurrentTag("");
     }
   };
@@ -160,11 +159,11 @@ export default function BoardForm() {
     e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>
   ) => {
     const { name, value } = e.target;
-    setForm((prev) => ({ ...prev, [name]: value }));
+    setForm({ ...form, [name]: value });
   };
 
   const handleCategoryChange = (value: string) => {
-    setForm((prev) => ({ ...prev, categoryId: value }));
+    setForm({ ...form, categoryId: value });
   };
 
   const handleSubmit = async (e: React.FormEvent) => {
@@ -175,7 +174,6 @@ export default function BoardForm() {
     }
 
     const result = await analyze(formData);
-    console.log("result : ", result);
 
     setBoardMutation(
       { boardRequest: form, file: videoFile },
@@ -189,10 +187,10 @@ export default function BoardForm() {
   };
 
   const removeTag = (tag: string) => {
-    setForm((prev) => ({
-      ...prev,
-      tags: prev.tags.filter((t) => t !== tag),
-    }));
+    setForm({
+      ...form,
+      tags: form.tags.filter((t) => t !== tag),
+    });
   };
 
   return (

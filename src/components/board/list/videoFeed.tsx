@@ -4,9 +4,11 @@ import { Tabs, TabsList, TabsTrigger, TabsContent } from "@/components/ui/tabs";
 import RecentBoards from "./recentBoards";
 import FollowingBoards from "./followingBoards";
 import { useAuthStore } from "@/stores/useAuthStore";
+import { useSearchParams } from "next/navigation";
 
-export default function VideoFeed({ category }: { category: string | null }) {
+export default function VideoFeed() {
   const { isLoggedIn } = useAuthStore();
+  const params = useSearchParams().get("category");
 
   return (
     <div className="space-y-8">
@@ -20,11 +22,11 @@ export default function VideoFeed({ category }: { category: string | null }) {
           {isLoggedIn && <TabsTrigger value="following">Following</TabsTrigger>}
         </TabsList>
         <TabsContent value="Recent" className="mt-6">
-          <RecentBoards category={category} />
+          <RecentBoards category={params as string} />
         </TabsContent>
         {isLoggedIn && (
           <TabsContent value="following" className="mt-6">
-            <FollowingBoards category={category} />
+            <FollowingBoards category={params as string} />
           </TabsContent>
         )}
       </Tabs>

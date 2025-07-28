@@ -7,8 +7,15 @@ import {
 } from "../../ui/card";
 import { Label } from "../../ui/label";
 import { Switch } from "../../ui/switch";
+import { BoardRequest } from "@/types/board";
 
-export default function BoardSideForm() {
+export default function BoardSideForm({
+  setForm,
+  form,
+}: {
+  setForm: (form: BoardRequest) => void;
+  form: BoardRequest;
+}) {
   return (
     <div className="space-y-6">
       <Card>
@@ -26,7 +33,13 @@ export default function BoardSideForm() {
                 Allow viewers to comment
               </p>
             </div>
-            <Switch id="comments" defaultChecked />
+            <Switch
+              id="comments"
+              defaultChecked={form.commentVisibility}
+              onCheckedChange={(checked) =>
+                setForm({ ...form, commentVisibility: checked })
+              }
+            />
           </div>
 
           <div className="flex items-center justify-between">
@@ -36,7 +49,13 @@ export default function BoardSideForm() {
                 Send notification to subscribers
               </p>
             </div>
-            <Switch id="notify" defaultChecked />
+            <Switch
+              id="notify"
+              defaultChecked={form.notifyOption}
+              onCheckedChange={(checked) =>
+                setForm({ ...form, notifyOption: checked })
+              }
+            />
           </div>
         </CardContent>
       </Card>

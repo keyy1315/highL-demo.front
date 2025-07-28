@@ -5,7 +5,7 @@ import { useParams } from "next/navigation";
 import { Button } from "@/components/ui/button";
 import { Heart, MessageCircle, Pencil, Trash2 } from "lucide-react";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
-import BoardComment from "@/components/comment/board-comment";
+import BoardComment from "@/components/comment/boardComment";
 import { useAuthStore } from "@/stores/useAuthStore";
 import { useRouter } from "next/navigation";
 import { useBoard } from "@/hooks/useBoard";
@@ -135,7 +135,7 @@ export default function MainBoard() {
           </div>
         </div>
       </div>
-      <BoardComment boardId={boardId as string} />
+      {board?.commentVisibility && <BoardComment boardId={boardId as string} />}
     </>
   );
 }

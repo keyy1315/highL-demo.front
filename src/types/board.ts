@@ -12,6 +12,8 @@ export interface Board {
   views: number;
   comments: number;
   createdDate: string;
+  label: "lol" | "tft" | null;
+  commentVisibility: boolean;
 }
 
 export interface BoardRequest {
@@ -20,6 +22,8 @@ export interface BoardRequest {
   categoryId: string;
   tags: string[];
   label: string | null;
+  commentVisibility: boolean;
+  notifyOption: boolean;
 }
 
 export interface VideoAnalyzeResult {

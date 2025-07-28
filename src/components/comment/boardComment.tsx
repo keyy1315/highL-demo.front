@@ -1,6 +1,6 @@
 import { useState } from "react";
-import CommentForm from "./comment-form";
-import CommentList from "./comment-list";
+import CommentForm from "./commentForm";
+import CommentList from "./commentList";
 import { useComments } from "@/hooks/useComments";
 import { Comment } from "@/types/comment";
 import { useNotificationContext } from "@/providers/notificationContext";

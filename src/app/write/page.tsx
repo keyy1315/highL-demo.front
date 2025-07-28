@@ -1,5 +1,4 @@
-import BoardForm from "@/components/board/write/boardForm";
-import BoardSideForm from "@/components/board/write/boardOptionForm";
+import BoardWrite from "@/components/board/write/boardWrite";
 
 export default function WritePage() {
   return (
@@ -10,12 +9,7 @@ export default function WritePage() {
           <p className="text-muted-foreground">Share your Highlights In Game</p>
         </div>
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
-          <div className="lg:col-span-2">
-            <BoardForm />
-          </div>
-          <div className="lg:col-span-1">
-            <BoardSideForm />
-          </div>
+          <BoardWrite />
         </div>
       </main>
     </div>

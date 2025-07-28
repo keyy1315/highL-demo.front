@@ -18,7 +18,7 @@ export default function Sidebar() {
   };
 
   const handleCategoryClick = (categoryName: string) => {
-    router.push(`/board?category=${categoryName}`);
+    router.push(`/?category=${categoryName.toLowerCase()}`);
   };
 
   return (
@@ -41,7 +41,7 @@ export default function Sidebar() {
           {categories.map((category) => (
             <div
               key={category.id}
-              className="rounded-lg border bg-card p-4 shadow-sm cursor-pointer hover:bg-accent"
+              className="rounded-lg border bg-card p-4 shadow-sm cursor-pointer h over:bg-accent"
               onClick={() => handleCategoryClick(category.name)}
             >
               <div className="space-y-2">
